@@ -1,9 +1,9 @@
 {
   "languageserver": {
     "haskell": {
-      "command": "stack",
-      "args": ["--no-docker", "exec", "--", "hie-wrapper"],
-      "rootPatterns": [".stack.yaml", "cabal.config", "package.yaml"],
+      "command": "hie-wrapper",
+      "args": ["--lsp"],
+      "rootPatterns": ["*.cabal", "stack.yaml", "cabal.project", "package.yaml"],
       "filetypes": ["hs", "lhs", "haskell"],
       "initializationOptions": {},
       "settings": {
