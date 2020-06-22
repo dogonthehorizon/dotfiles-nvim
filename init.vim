@@ -19,17 +19,19 @@ call minpac#add('dag/vim-fish')
 call minpac#add('pangloss/vim-javascript')
 call minpac#add('leafgarland/typescript-vim')
 call minpac#add('maxmellon/vim-jsx-pretty')
+call minpac#add('HerringtonDarkholme/yats.vim')
 
 """ Themes
 call minpac#add('vim-airline/vim-airline-themes')
 call minpac#add('altercation/vim-colors-solarized')
+call minpac#add('ryanoasis/vim-devicons')
 
 """ Completion plugins
 call minpac#add('neoclide/coc.nvim', {'branch': 'release'})
 
 """ Utilities
 call minpac#add('w0rp/ale')
-call minpac#add('ctrlpvim/ctrlp.vim')
+call minpac#add('junegunn/fzf.vim')
 call minpac#add('scrooloose/nerdcommenter')
 call minpac#add('myusuf3/numbers.vim')
 call minpac#add('kien/rainbow_parentheses.vim')
@@ -80,7 +82,9 @@ set shortmess+=mnrxoOtT                        " Abbrev. of messages (avoids 'hi
 set virtualedit=onemore                        " Allow for cursor beyond last character
 
 set backup                                     " allow backups
+set backupdir=~/.local/share/nvim/backup
 set undofile                                   " persistent undo
+set undodir=~/.local/share/nvim/undo
 set undolevels=1000
 set undoreload=10000
 
@@ -140,26 +144,64 @@ if has("autocmd") && exists("+omnifunc")
         \endif
 endif
 
-""" Ctrl-P
-hi Pmenu  guifg=#000000 guibg=#F8F8F8 ctermfg=black ctermbg=Lightgray
-hi PmenuSbar  guifg=#8A95A7 guibg=#F8F8F8 gui=NONE ctermfg=darkcyan ctermbg=lightgray cterm=NONE
-hi PmenuThumb  guifg=#F8F8F8 guibg=#8A95A7 gui=NONE ctermfg=lightgray ctermbg=darkcyan cterm=NONE
-let g:ctrlp_working_path_mode = 'ra'
-nnoremap <silent> <D-t> :CtrlP<CR>
-nnoremap <silent> <D-r> :CtrlPMRU<CR>
-set wildignore+=*/tmp/*,*.so,*.swp,*.zip
-let g:ctrlp_custom_ignore = {
-  \ 'dir': '\v[\/]\.(git|hg|svn|gradle)$',
-  \ 'file': '\v\.(exe|so|dll|bin)$',
-  \ }
+""" FZF
 
-let g:ctrlp_user_command = {
-    \ 'types': {
-        \ 1: ['.git', 'cd %s && git ls-files -co --exclude-standard'],
-        \ 2: ['.hg', 'hg --cwd %s locate -I .'],
-    \ },
-    \ 'fallback': 'find %s -type f'
-\ }
+" ripgrep
+let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
+set grepprg=rg\ --vimgrep
+command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
+
+" Overriding fzf.vim's default :Files command.
+" Pass zero or one args to Files command (which are then passed to Fzf_dev). Support file path completion too.
+command! -nargs=? -complete=file Files call Fzf_dev(<q-args>)
+
+nnoremap <silent> <C-P> :Files<CR>
+
+
+" Files + devicons
+function! Fzf_dev(qargs)
+  let l:fzf_files_options = '--color fg:-1,bg:-1,hl:33,fg+:235,bg+:254,hl+:33 --color info:136,prompt:136,pointer:234,marker:234,spinner:136 --preview "bat --theme=\"Solarized (light)\" --style=numbers,changes --color always {2..-1} | head -'.&lines.'" --expect=ctrl-t,ctrl-v,ctrl-x --multi --bind=ctrl-a:select-all,ctrl-d:deselect-all'
+
+  function! s:files(dir)
+    let l:cmd = $FZF_DEFAULT_COMMAND
+    if a:dir != ''
+      let l:cmd .= ' ' . shellescape(a:dir)
+    endif
+    let l:files = split(system(l:cmd), '\n')
+    return s:prepend_icon(l:files)
+  endfunction
+
+  function! s:prepend_icon(candidates)
+    let l:result = []
+    for l:candidate in a:candidates
+      let l:filename = fnamemodify(l:candidate, ':p:t')
+      let l:icon = WebDevIconsGetFileTypeSymbol(l:filename, isdirectory(l:filename))
+      call add(l:result, printf('%s %s', l:icon, l:candidate))
+    endfor
+
+    return l:result
+  endfunction
+
+  function! s:edit_file(lines)
+    if len(a:lines) < 2 | return | endif
+
+    let l:cmd = get({'ctrl-x': 'split',
+                 \ 'ctrl-v': 'vertical split',
+                 \ 'ctrl-t': 'tabe'}, a:lines[0], 'e')
+    
+    for l:item in a:lines[1:]
+      let l:pos = stridx(l:item, ' ')
+      let l:file_path = l:item[pos+1:-1]
+      execute 'silent '. l:cmd . ' ' . l:file_path
+    endfor
+  endfunction
+
+  call fzf#run({
+        \ 'source': <sid>files(a:qargs),
+        \ 'sink*':   function('s:edit_file'),
+        \ 'options': '-m ' . l:fzf_files_options,
+        \ 'down':    '40%' })
+endfunction
 
 """ Fugitive
 nnoremap <silent> <leader>gs :Gstatus<CR>
