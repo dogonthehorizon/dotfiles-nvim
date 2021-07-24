@@ -70,10 +70,6 @@ au FocusLost * silent! wa
 " Remove the ugly pipe separator for windows
 set fillchars+=vert:\ 
 
-" Enhance the functionality of '%'
-runtime macros/matchit.vim
-
-
 " vim-airline config
 let g:airline_theme='solarized'
 let g:airline_powerline_fonts=1
@@ -93,7 +89,7 @@ set undoreload=10000
 
 set showmode                                   " Display the current mode
 set cursorline                                 " Highlight current line
-set clipboard=unnamedplus                          " OSX clipboard access.
+set clipboard=unnamedplus                      " clipboard access.
 
 set linespace=0                                " No extra spaces between rows
 set number                                     " Line numbers on
@@ -137,9 +133,7 @@ endif
 " Yank from the cursor to the end of the line, to be consistent with C and D.
 nnoremap Y y$
 
-" For when you forget to sudo.. Really write the file.
-cmap w!! w !sudo tee % >/dev/null
-
+" TODO determine if this is still needed
 if has("autocmd") && exists("+omnifunc")
     autocmd Filetype *
         \if &omnifunc == "" |
@@ -316,6 +310,3 @@ command! -range=% FormatXML <line1>,<line2>call DoFormatXML()
 
 nmap <silent> <leader>x :%FormatXML<CR>
 vmap <silent> <leader>x :FormatXML<CR>
-
-" Maps Coquille commands to <F2> (Undo), <F3> (Next), <F4> (ToCursor)
-au FileType coq call coquille#FNMapping()
