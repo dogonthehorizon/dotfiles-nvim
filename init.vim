@@ -21,6 +21,9 @@ call minpac#add('leafgarland/typescript-vim')
 call minpac#add('maxmellon/vim-jsx-pretty')
 call minpac#add('HerringtonDarkholme/yats.vim')
 
+" Terraform
+call minpac#add('hashivim/vim-terraform')
+
 """ Themes
 call minpac#add('vim-airline/vim-airline-themes')
 call minpac#add('altercation/vim-colors-solarized')
@@ -244,6 +247,10 @@ let g:ale_fixers = {
 
 " Fix files automatically on save.
 let g:ale_fix_on_save = 1
+
+" Terraform settings
+let g:terraform_align = 1
+let g:terraform_fmt_on_save = 1
 
 let g:indent_guides_start_level = 2
 let g:indent_guides_guide_size = 1
