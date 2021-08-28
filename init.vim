@@ -2,66 +2,10 @@ if &shell =~# 'fish$'
     set shell=bash
 endif
 
-set packpath^=~/.config/nvim/
-packadd minpac
-
-call minpac#init()
-call minpac#add('k-takata/minpac', {'type': 'opt'})
-
-""" Language Specific Plugins
-" Haskell
-call minpac#add('neovimhaskell/haskell-vim')
-
-"Fish
-call minpac#add('dag/vim-fish')
-
-" The Javascript World
-call minpac#add('pangloss/vim-javascript')
-call minpac#add('leafgarland/typescript-vim')
-call minpac#add('maxmellon/vim-jsx-pretty')
-call minpac#add('HerringtonDarkholme/yats.vim')
-
-" Terraform
-call minpac#add('hashivim/vim-terraform')
-
-""" Themes
-call minpac#add('vim-airline/vim-airline-themes')
-call minpac#add('altercation/vim-colors-solarized')
-call minpac#add('ryanoasis/vim-devicons')
-
-""" Completion plugins
-call minpac#add('neoclide/coc.nvim', {'branch': 'release'})
-
-""" Utilities
-call minpac#add('w0rp/ale')
-call minpac#add('junegunn/fzf.vim')
-call minpac#add('scrooloose/nerdcommenter')
-call minpac#add('myusuf3/numbers.vim')
-call minpac#add('kien/rainbow_parentheses.vim')
-call minpac#add('vim-scripts/restore_view.vim')
-call minpac#add('godlygeek/tabular')
-call minpac#add('vim-airline/vim-airline')
-call minpac#add('Townk/vim-autoclose')
-call minpac#add('tpope/vim-fugitive')
-call minpac#add('airblade/vim-gitgutter')
-call minpac#add('nathanaelkane/vim-indent-guides')
-call minpac#add('dbakker/vim-lint')
-call minpac#add('guns/vim-sexp')
-call minpac#add('tpope/vim-surround')
-call minpac#add('tpope/vim-vinegar')
-call minpac#add('tpope/vim-obsession')
-
-command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})
-command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
-command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
-
 " Change the leader but retain the ability to backwards char search
 let mapleader = ","
 noremap \ ,
 
-set t_Co=256 "256 color support
-set background=light
-colorscheme solarized
 
 " Autosave open files when window loses focus
 " Note: this doesn't support saving untitled buffers
@@ -76,41 +20,6 @@ let g:airline_powerline_fonts=1
 let g:airline#extensions#tabline#enabled = 1
 " end vim-airline config
 
-set pyxversion=3                               " Make sure nvim knows about
-set shortmess+=mnrxoOtT                        " Abbrev. of messages (avoids 'hit enter')
-set virtualedit=onemore                        " Allow for cursor beyond last character
-
-set backup                                     " allow backups
-set backupdir=~/.local/share/nvim/backup
-set undofile                                   " persistent undo
-set undodir=~/.local/share/nvim/undo
-set undolevels=1000
-set undoreload=10000
-
-set showmode                                   " Display the current mode
-set cursorline                                 " Highlight current line
-set clipboard=unnamedplus                      " clipboard access.
-
-set linespace=0                                " No extra spaces between rows
-set number                                     " Line numbers on
-set showmatch                                  " Show matching brackets/parenthesis
-set ignorecase                                 " Case insensitive search
-set smartcase                                  " Case sensitive when uc present
-set winminheight=0                             " Windows can be 0 line high
-set wildmode=list:longest,full                 " Command <Tab> completion, list matches, then longest common part, then all.
-set whichwrap=b,s,h,l,<,>,[,]                  " Backspace and cursor keys wrap too
-set scrolljump=5                               " Lines to scroll when cursor leaves screen
-set scrolloff=3                                " Minimum lines to keep above and below cursor
-set foldenable                                 " Auto fold code
-set list
-set listchars="tab:›\ ,trail:•,extends:#,nbsp:." " Highlight problematic whitespace
-set nowrap                                     " Disable line wrapping by default
-set colorcolumn=80                             " Set a visual column marker at 80 chars
-
-set shiftwidth=2                               " Use indents of 2 spaces
-set expandtab                                  " Tabs are spaces, not tabs
-set tabstop=2                                  " An indentation every two columns
-set softtabstop=2                              " Let backspace delete indent
 
 " Automatically wrap j and k to the next/prev line
 nnoremap j gj
@@ -185,7 +94,7 @@ function! Fzf_dev(qargs)
     let l:cmd = get({'ctrl-x': 'split',
                  \ 'ctrl-v': 'vertical split',
                  \ 'ctrl-t': 'tabe'}, a:lines[0], 'e')
-    
+
     for l:item in a:lines[1:]
       let l:pos = stridx(l:item, ' ')
       let l:file_path = l:item[pos+1:-1]
@@ -310,3 +219,137 @@ command! -range=% FormatXML <line1>,<line2>call DoFormatXML()
 
 nmap <silent> <leader>x :%FormatXML<CR>
 vmap <silent> <leader>x :FormatXML<CR>
+
+set packpath^=~/.config/nvim/
+packadd minpac
+
+lua <<EOF
+
+vim.call('minpac#init')
+
+-- global options
+local o = vim.o
+-- window options
+local wo = vim.wo
+-- buffer options
+local bo = vim.bo
+-- vim options?
+local opt = vim.opt
+
+-- Make sure nvim knows about
+o.pyxversion = 3
+-- Abbrev. of messages (avoids 'hit enter')
+opt.shortmess:append "mnrxoOtT"
+-- Allow for cursor beyond last character
+o.virtualedit = "onemore"
+
+-- Turn on backups
+o.backup = true
+-- Persistent undo
+o.undofile = true
+o.undolevels = 1000
+o.undoreload = 10000
+
+-- Highlight current line
+o.cursorline = true
+-- Global clipboard access
+o.clipboard = "unnamedplus"
+
+-- Line numbers on
+o.number = true
+-- Show matching brackets/parenthesis
+o.showmatch = true
+-- Case insensitive search
+o.ignorecase = true
+-- Case sensitive when uc present
+o.smartcase = true
+-- Command <Tab> completion, list matches, then longest common part, then all.
+o.wildmode = "list:longest,full"
+-- Backspace and cursor keys wrap too
+o.whichwrap = "b,s,h,l,<,>,[,]"
+-- Lines to scroll when cursor leaves screen
+o.scrolljump = 5
+-- Minimum lines to keep above and below cursor
+o.scrolloff = 3
+-- Highlight problematic whitespace
+o.listchars = "tab:› ,trail:•,extends:#,nbsp:."
+
+-- Use indents of 2 spaces
+o.shiftwidth = 2
+-- Tabs are spaces, not tabs
+o.expandtab = true
+-- An indentation every two columns
+o.tabstop = 2
+-- Let backspace delete indent
+o.softtabstop = 2
+
+
+-- TreeSitter config
+require'nvim-treesitter.configs'.setup {
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+    -- Using this option may slow down your editor, and you may see some duplicate highlights.
+    -- Instead of true it can also be a list of languages
+    additional_vim_regex_highlighting = false,
+  },
+}
+
+-- Set the colorscheme in Lua
+vim.cmd('colorscheme solarized')
+vim.cmd('set background=light')
+vim.g.solarized_visibility = 'high'
+vim.g.solarized_diffmode = 'high'
+EOF
+
+call minpac#add('k-takata/minpac', {'type': 'opt'})
+
+""" Language Specific Plugins
+" Haskell
+call minpac#add('neovimhaskell/haskell-vim')
+
+"Fish
+call minpac#add('dag/vim-fish')
+
+" The Javascript World
+call minpac#add('pangloss/vim-javascript')
+call minpac#add('leafgarland/typescript-vim')
+call minpac#add('maxmellon/vim-jsx-pretty')
+call minpac#add('HerringtonDarkholme/yats.vim')
+
+" Terraform
+call minpac#add('hashivim/vim-terraform')
+
+""" Themes
+call minpac#add('vim-airline/vim-airline-themes')
+call minpac#add('ryanoasis/vim-devicons')
+
+call minpac#add('ishan9299/nvim-solarized-lua')
+
+""" Completion plugins
+call minpac#add('neoclide/coc.nvim', {'branch': 'release'})
+
+""" Utilities
+call minpac#add('w0rp/ale')
+call minpac#add('junegunn/fzf.vim')
+call minpac#add('scrooloose/nerdcommenter')
+call minpac#add('myusuf3/numbers.vim')
+call minpac#add('kien/rainbow_parentheses.vim')
+call minpac#add('vim-scripts/restore_view.vim')
+call minpac#add('godlygeek/tabular')
+call minpac#add('vim-airline/vim-airline')
+call minpac#add('Townk/vim-autoclose')
+call minpac#add('tpope/vim-fugitive')
+call minpac#add('airblade/vim-gitgutter')
+call minpac#add('nathanaelkane/vim-indent-guides')
+call minpac#add('dbakker/vim-lint')
+call minpac#add('guns/vim-sexp')
+call minpac#add('tpope/vim-surround')
+call minpac#add('tpope/vim-vinegar')
+call minpac#add('tpope/vim-obsession')
+call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})
+
+command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})
+command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
+command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
