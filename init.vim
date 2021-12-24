@@ -2,15 +2,6 @@ if &shell =~# 'fish$'
     set shell=bash
 endif
 
-" Change the leader but retain the ability to backwards char search
-let mapleader = ","
-noremap \ ,
-
-
-" Autosave open files when window loses focus
-" Note: this doesn't support saving untitled buffers
-au FocusLost * silent! wa
-
 " Remove the ugly pipe separator for windows
 set fillchars+=vert:\ 
 
@@ -145,7 +136,8 @@ let g:ale_linters = {
 
 let g:ale_fixers = {
 \  'python': ['black'],
-\  'go': ['goimports', 'gofmt']
+\  'go': ['goimports', 'gofmt'],
+\  'haskell': ['ormolu']
 \}
 
 " Fix files automatically on save.
@@ -229,12 +221,17 @@ vim.call('minpac#init')
 
 -- global options
 local o = vim.o
+local g = vim.g
 -- window options
 local wo = vim.wo
 -- buffer options
 local bo = vim.bo
 -- vim options?
 local opt = vim.opt
+
+g.mapleader = ","
+-- Change the leader but retain the ability to backwards char search
+vim.api.nvim_buf_set_keymap(0, '', '\\', ',', {noremap = true})
 
 -- Make sure nvim knows about
 o.pyxversion = 3
@@ -283,11 +280,15 @@ o.tabstop = 2
 -- Let backspace delete indent
 o.softtabstop = 2
 
+-- Autosave open files when window loses focus
+-- NOTE: doesn't work w/ untitled buffers
+-- TODO: move to lua-native autocmd when it's released
+vim.cmd('au FocusLost * silent! wa')
 
 -- TreeSitter config
 require'nvim-treesitter.configs'.setup {
   highlight = {
-    enable = true,              -- false will disable the whole extension
+    enable = true,
     -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
     -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
     -- Using this option may slow down your editor, and you may see some duplicate highlights.
