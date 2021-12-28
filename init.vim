@@ -2,20 +2,6 @@ if &shell =~# 'fish$'
     set shell=bash
 endif
 
-" Remove the ugly pipe separator for windows
-set fillchars+=vert:\ 
-
-" vim-airline config
-let g:airline_theme='solarized'
-let g:airline_powerline_fonts=1
-let g:airline#extensions#tabline#enabled = 1
-" end vim-airline config
-
-
-" Automatically wrap j and k to the next/prev line
-nnoremap j gj
-nnoremap k gk
-
 " Shift key fixes
 if has("user_commands")
     command! -bang -nargs=* -complete=file E e<bang> <args>
@@ -28,17 +14,6 @@ if has("user_commands")
     command! -bang QA qa<bang>
     command! -bang Qa qa<bang>
     command! -bang Tabn tabn<bang>
-endif
-
-" Yank from the cursor to the end of the line, to be consistent with C and D.
-nnoremap Y y$
-
-" TODO determine if this is still needed
-if has("autocmd") && exists("+omnifunc")
-    autocmd Filetype *
-        \if &omnifunc == "" |
-        \setlocal omnifunc=syntaxcomplete#Complete |
-        \endif
 endif
 
 """ FZF
@@ -118,7 +93,7 @@ inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gt <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
@@ -284,6 +259,10 @@ o.softtabstop = 2
 -- NOTE: doesn't work w/ untitled buffers
 -- TODO: move to lua-native autocmd when it's released
 vim.cmd('au FocusLost * silent! wa')
+
+-- Airline config
+g.airline_theme = 'solarized'
+g.airline_powerline_fonts = 1
 
 -- TreeSitter config
 require'nvim-treesitter.configs'.setup {
