@@ -16,64 +16,6 @@ if has("user_commands")
     command! -bang Tabn tabn<bang>
 endif
 
-""" FZF
-
-" ripgrep
-let $FZF_DEFAULT_COMMAND = 'rg --files --hidden --follow --glob "!.git/*"'
-set grepprg=rg\ --vimgrep
-command! -bang -nargs=* Find call fzf#vim#grep('rg --column --line-number --no-heading --fixed-strings --ignore-case --hidden --follow --glob "!.git/*" --color "always" '.shellescape(<q-args>).'| tr -d "\017"', 1, <bang>0)
-
-" Overriding fzf.vim's default :Files command.
-" Pass zero or one args to Files command (which are then passed to Fzf_dev). Support file path completion too.
-command! -nargs=? -complete=file Files call Fzf_dev(<q-args>)
-
-nnoremap <silent> <C-P> :Files<CR>
-
-
-" Files + devicons
-function! Fzf_dev(qargs)
-  let l:fzf_files_options = '--color fg:-1,bg:-1,hl:33,fg+:235,bg+:254,hl+:33 --color info:136,prompt:136,pointer:234,marker:234,spinner:136 --preview "bat --theme=\"Solarized (light)\" --style=numbers,changes --color always {2..-1} | head -'.&lines.'" --expect=ctrl-t,ctrl-v,ctrl-x --multi --bind=ctrl-a:select-all,ctrl-d:deselect-all'
-
-  function! s:files(dir)
-    let l:cmd = $FZF_DEFAULT_COMMAND
-    if a:dir != ''
-      let l:cmd .= ' ' . shellescape(a:dir)
-    endif
-    let l:files = split(system(l:cmd), '\n')
-    return s:prepend_icon(l:files)
-  endfunction
-
-  function! s:prepend_icon(candidates)
-    let l:result = []
-    for l:candidate in a:candidates
-      let l:filename = fnamemodify(l:candidate, ':p:t')
-      let l:icon = WebDevIconsGetFileTypeSymbol(l:filename, isdirectory(l:filename))
-      call add(l:result, printf('%s %s', l:icon, l:candidate))
-    endfor
-
-    return l:result
-  endfunction
-
-  function! s:edit_file(lines)
-    if len(a:lines) < 2 | return | endif
-
-    let l:cmd = get({'ctrl-x': 'split',
-                 \ 'ctrl-v': 'vertical split',
-                 \ 'ctrl-t': 'tabe'}, a:lines[0], 'e')
-
-    for l:item in a:lines[1:]
-      let l:pos = stridx(l:item, ' ')
-      let l:file_path = l:item[pos+1:-1]
-      execute 'silent '. l:cmd . ' ' . l:file_path
-    endfor
-  endfunction
-
-  call fzf#run({
-        \ 'source': <sid>files(a:qargs),
-        \ 'sink*':   function('s:edit_file'),
-        \ 'options': '-m ' . l:fzf_files_options,
-        \ 'down':    '40%' })
-endfunction
 
 """ Fugitive
 nnoremap <silent> <leader>gs :Gstatus<CR>
@@ -101,22 +43,6 @@ nmap <silent> gr <Plug>(coc-references)
 nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
-
-" ale
-" Ensure that Ale uses Stack to properly configure project deps when linting.
-let g:ale_linters = {
-\  'haskell': ['stack_build', 'stack_ghc'],
-\  'python':  ['pylint']
-\}
-
-let g:ale_fixers = {
-\  'python': ['black'],
-\  'go': ['goimports', 'gofmt'],
-\  'haskell': ['ormolu']
-\}
-
-" Fix files automatically on save.
-let g:ale_fix_on_save = 1
 
 " Terraform settings
 let g:terraform_align = 1
@@ -260,10 +186,6 @@ o.softtabstop = 2
 -- TODO: move to lua-native autocmd when it's released
 vim.cmd('au FocusLost * silent! wa')
 
--- Airline config
-g.airline_theme = 'solarized'
-g.airline_powerline_fonts = 1
-
 -- TreeSitter config
 require'nvim-treesitter.configs'.setup {
   highlight = {
@@ -277,10 +199,25 @@ require'nvim-treesitter.configs'.setup {
 }
 
 -- Set the colorscheme in Lua
-vim.cmd('colorscheme solarized')
 vim.cmd('set background=light')
-vim.g.solarized_visibility = 'high'
-vim.g.solarized_diffmode = 'high'
+vim.cmd('colorscheme solarized-flat')
+
+-- Setup devicons
+require'nvim-web-devicons'.setup {
+  default = true
+}
+icons = require "nvim-nonicons"
+
+-- setup statusline
+require'lualine'.setup {
+  options = {
+    theme = 'solarized_light'
+  }
+}
+
+telescope = require'telescope'
+
+telescope.load_extension('fzf')
 EOF
 
 call minpac#add('k-takata/minpac', {'type': 'opt'})
@@ -302,23 +239,27 @@ call minpac#add('HerringtonDarkholme/yats.vim')
 call minpac#add('hashivim/vim-terraform')
 
 """ Themes
-call minpac#add('vim-airline/vim-airline-themes')
-call minpac#add('ryanoasis/vim-devicons')
+call minpac#add('nvim-lualine/lualine.nvim')
+call minpac#add('yamatsum/nvim-nonicons')
+call minpac#add('kyazdani42/nvim-web-devicons')
 
 call minpac#add('ishan9299/nvim-solarized-lua')
 
 """ Completion plugins
 call minpac#add('neoclide/coc.nvim', {'branch': 'release'})
+call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})
+
+""" Command palette-style plugins
+call minpac#add('nvim-lua/plenary.nvim')
+call minpac#add('nvim-telescope/telescope.nvim')
+call minpac#add('nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'})
 
 """ Utilities
-call minpac#add('w0rp/ale')
-call minpac#add('junegunn/fzf.vim')
 call minpac#add('scrooloose/nerdcommenter')
 call minpac#add('myusuf3/numbers.vim')
 call minpac#add('kien/rainbow_parentheses.vim')
 call minpac#add('vim-scripts/restore_view.vim')
 call minpac#add('godlygeek/tabular')
-call minpac#add('vim-airline/vim-airline')
 call minpac#add('Townk/vim-autoclose')
 call minpac#add('tpope/vim-fugitive')
 call minpac#add('airblade/vim-gitgutter')
@@ -328,8 +269,9 @@ call minpac#add('guns/vim-sexp')
 call minpac#add('tpope/vim-surround')
 call minpac#add('tpope/vim-vinegar')
 call minpac#add('tpope/vim-obsession')
-call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})
 
 command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})
 command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
 command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
+
+nnoremap <silent> <C-P> :Telescope find_files<CR>
