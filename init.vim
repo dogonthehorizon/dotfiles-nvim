@@ -124,6 +124,58 @@ lua <<EOF
 
 vim.call('minpac#init')
 
+vim.cmd("call minpac#add('k-takata/minpac', {'type': 'opt'})")
+---- Language Specific Plugins
+-- Haskell
+vim.cmd("call minpac#add('neovimhaskell/haskell-vim')")
+
+-- Fish
+vim.cmd("call minpac#add('dag/vim-fish')")
+
+-- The Javascript World
+vim.cmd("call minpac#add('pangloss/vim-javascript')")
+vim.cmd("call minpac#add('leafgarland/typescript-vim')")
+vim.cmd("call minpac#add('maxmellon/vim-jsx-pretty')")
+vim.cmd("call minpac#add('HerringtonDarkholme/yats.vim')")
+
+-- Terraform
+vim.cmd("call minpac#add('hashivim/vim-terraform')")
+
+---- Themes & Fonts
+vim.cmd("call minpac#add('yamatsum/nvim-nonicons')")
+vim.cmd("call minpac#add('kyazdani42/nvim-web-devicons')")
+vim.cmd("call minpac#add('ishan9299/nvim-solarized-lua')")
+
+---- Completion plugins
+vim.cmd("call minpac#add('neoclide/coc.nvim', {'branch': 'release'})")
+vim.cmd("call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})")
+
+---- Command palette-style plugins
+vim.cmd("call minpac#add('nvim-lua/plenary.nvim')")
+vim.cmd("call minpac#add('nvim-telescope/telescope.nvim')")
+vim.cmd("call minpac#add('nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'})")
+
+---- Status and bufferline plugins
+
+vim.cmd("call minpac#add('nvim-lualine/lualine.nvim')")
+vim.cmd("call minpac#add('akinsho/bufferline.nvim')")
+
+---- Utilities
+vim.cmd("call minpac#add('scrooloose/nerdcommenter')")
+vim.cmd("call minpac#add('myusuf3/numbers.vim')")
+vim.cmd("call minpac#add('kien/rainbow_parentheses.vim')")
+vim.cmd("call minpac#add('vim-scripts/restore_view.vim')")
+vim.cmd("call minpac#add('godlygeek/tabular')")
+vim.cmd("call minpac#add('Townk/vim-autoclose')")
+vim.cmd("call minpac#add('tpope/vim-fugitive')")
+vim.cmd("call minpac#add('airblade/vim-gitgutter')")
+vim.cmd("call minpac#add('nathanaelkane/vim-indent-guides')")
+vim.cmd("call minpac#add('dbakker/vim-lint')")
+vim.cmd("call minpac#add('guns/vim-sexp')")
+vim.cmd("call minpac#add('tpope/vim-surround')")
+vim.cmd("call minpac#add('tpope/vim-vinegar')")
+vim.cmd("call minpac#add('tpope/vim-obsession')")
+
 -- global options
 local o = vim.o
 local g = vim.g
@@ -228,59 +280,6 @@ telescope = require'telescope'
 
 telescope.load_extension('fzf')
 EOF
-
-call minpac#add('k-takata/minpac', {'type': 'opt'})
-
-""" Language Specific Plugins
-" Haskell
-call minpac#add('neovimhaskell/haskell-vim')
-
-"Fish
-call minpac#add('dag/vim-fish')
-
-" The Javascript World
-call minpac#add('pangloss/vim-javascript')
-call minpac#add('leafgarland/typescript-vim')
-call minpac#add('maxmellon/vim-jsx-pretty')
-call minpac#add('HerringtonDarkholme/yats.vim')
-
-" Terraform
-call minpac#add('hashivim/vim-terraform')
-
-""" Themes & Fonts
-call minpac#add('yamatsum/nvim-nonicons')
-call minpac#add('kyazdani42/nvim-web-devicons')
-call minpac#add('ishan9299/nvim-solarized-lua')
-
-""" Completion plugins
-call minpac#add('neoclide/coc.nvim', {'branch': 'release'})
-call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})
-
-""" Command palette-style plugins
-call minpac#add('nvim-lua/plenary.nvim')
-call minpac#add('nvim-telescope/telescope.nvim')
-call minpac#add('nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'})
-
-""" Status and bufferline plugins
-
-call minpac#add('nvim-lualine/lualine.nvim')
-call minpac#add('akinsho/bufferline.nvim')
-
-""" Utilities
-call minpac#add('scrooloose/nerdcommenter')
-call minpac#add('myusuf3/numbers.vim')
-call minpac#add('kien/rainbow_parentheses.vim')
-call minpac#add('vim-scripts/restore_view.vim')
-call minpac#add('godlygeek/tabular')
-call minpac#add('Townk/vim-autoclose')
-call minpac#add('tpope/vim-fugitive')
-call minpac#add('airblade/vim-gitgutter')
-call minpac#add('nathanaelkane/vim-indent-guides')
-call minpac#add('dbakker/vim-lint')
-call minpac#add('guns/vim-sexp')
-call minpac#add('tpope/vim-surround')
-call minpac#add('tpope/vim-vinegar')
-call minpac#add('tpope/vim-obsession')
 
 command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})
 command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
