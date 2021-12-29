@@ -2,6 +2,10 @@ if &shell =~# 'fish$'
     set shell=bash
 endif
 
+" Enable better colors in neovim
+set termguicolors
+syntax enable
+
 " Shift key fixes
 if has("user_commands")
     command! -bang -nargs=* -complete=file E e<bang> <args>
@@ -35,7 +39,7 @@ inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
 inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
 
 nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gt <Plug>(coc-type-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
 nmap <silent> gr <Plug>(coc-references)
 
@@ -134,7 +138,7 @@ g.mapleader = ","
 -- Change the leader but retain the ability to backwards char search
 vim.api.nvim_buf_set_keymap(0, '', '\\', ',', {noremap = true})
 
--- Make sure nvim knows about
+-- Make sure nvim knows about the Python version we prefer
 o.pyxversion = 3
 -- Abbrev. of messages (avoids 'hit enter')
 opt.shortmess:append "mnrxoOtT"
@@ -214,6 +218,11 @@ require'lualine'.setup {
     theme = 'solarized_light'
   }
 }
+require'bufferline'.setup {
+  options = {
+    separator_style = "slant"
+  }
+}
 
 telescope = require'telescope'
 
@@ -238,11 +247,9 @@ call minpac#add('HerringtonDarkholme/yats.vim')
 " Terraform
 call minpac#add('hashivim/vim-terraform')
 
-""" Themes
-call minpac#add('nvim-lualine/lualine.nvim')
+""" Themes & Fonts
 call minpac#add('yamatsum/nvim-nonicons')
 call minpac#add('kyazdani42/nvim-web-devicons')
-
 call minpac#add('ishan9299/nvim-solarized-lua')
 
 """ Completion plugins
@@ -253,6 +260,11 @@ call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})
 call minpac#add('nvim-lua/plenary.nvim')
 call minpac#add('nvim-telescope/telescope.nvim')
 call minpac#add('nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'})
+
+""" Status and bufferline plugins
+
+call minpac#add('nvim-lualine/lualine.nvim')
+call minpac#add('akinsho/bufferline.nvim')
 
 """ Utilities
 call minpac#add('scrooloose/nerdcommenter')
