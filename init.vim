@@ -2,28 +2,6 @@ if &shell =~# 'fish$'
     set shell=bash
 endif
 
-" Shift key fixes
-if has("user_commands")
-    command! -bang -nargs=* -complete=file E e<bang> <args>
-    command! -bang -nargs=* -complete=file W w<bang> <args>
-    command! -bang -nargs=* -complete=file Wq wq<bang> <args>
-    command! -bang -nargs=* -complete=file WQ wq<bang> <args>
-    command! -bang Wa wa<bang>
-    command! -bang WA wa<bang>
-    command! -bang Q   q<bang>
-    command! -bang QA qa<bang>
-    command! -bang Qa qa<bang>
-    command! -bang Tabn tabn<bang>
-endif
-
-
-""" Fugitive
-nnoremap <silent> <leader>gs :Gstatus<CR>
-nnoremap <silent> <leader>gd :Gdiff<CR>
-nnoremap <silent> <leader>gc :Gcommit<CR>
-nnoremap <silent> <leader>gb :Gblame<CR>
-nnoremap <silent> <leader>gl :Glog<CR>
-nnoremap <silent> <leader>gp :Git push<CR>
 
 """" coc.nvim
 autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
@@ -43,10 +21,6 @@ nmap <silent> gr <Plug>(coc-references)
 nmap <leader>ac  <Plug>(coc-codeaction)
 " Apply AutoFix to problem on the current line.
 nmap <leader>qf  <Plug>(coc-fix-current)
-
-" Terraform settings
-let g:terraform_align = 1
-let g:terraform_fmt_on_save = 1
 
 let g:indent_guides_start_level = 2
 let g:indent_guides_guide_size = 1
@@ -91,6 +65,10 @@ vim.cmd("call minpac#add('HerringtonDarkholme/yats.vim')")
 
 -- Terraform
 vim.cmd("call minpac#add('hashivim/vim-terraform')")
+
+g.terraform_align = 1
+g.terraform_fmt_on_save = 1
+
 
 ---- Themes & Fonts
 vim.cmd("call minpac#add('yamatsum/nvim-nonicons')")
@@ -202,7 +180,7 @@ require'nvim-treesitter.configs'.setup {
 }
 
 -- Set the colorscheme in Lua
-vim.cmd('set background=light')
+o.background = 'light'
 vim.cmd('colorscheme solarized-flat')
 
 -- Setup devicons
@@ -227,4 +205,24 @@ telescope = require'telescope'
 telescope.load_extension('fzf')
 -- Open find_files w/ C-p
 vim.api.nvim_set_keymap('n', '<C-p>',  [[:Telescope find_files<CR>]], { noremap = true, silent = true })
+
+-- Shift key fixes
+vim.cmd("command! -bang -nargs=* -complete=file E e<bang> <args>")
+vim.cmd("command! -bang -nargs=* -complete=file W w<bang> <args>")
+vim.cmd("command! -bang -nargs=* -complete=file Wq wq<bang> <args>")
+vim.cmd("command! -bang -nargs=* -complete=file WQ wq<bang> <args>")
+vim.cmd("command! -bang Wa wa<bang>")
+vim.cmd("command! -bang WA wa<bang>")
+vim.cmd("command! -bang Q   q<bang>")
+vim.cmd("command! -bang QA qa<bang>")
+vim.cmd("command! -bang Qa qa<bang>")
+vim.cmd("command! -bang Tabn tabn<bang>")
+
+-- Fugitive
+vim.api.nvim_set_keymap('n', '<leader>gs',  [[:Git<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gd',  [[:Gdiff<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gc',  [[:Git commit<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gb',  [[:Git blame<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gl',  [[:Git log<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gp',  [[:Git push<CR>]], { noremap = true, silent = true })
 EOF
