@@ -2,10 +2,6 @@ if &shell =~# 'fish$'
     set shell=bash
 endif
 
-" Enable better colors in neovim
-set termguicolors
-syntax enable
-
 " Shift key fixes
 if has("user_commands")
     command! -bang -nargs=* -complete=file E e<bang> <args>
@@ -62,65 +58,20 @@ au Syntax * RainbowParenthesesLoadRound
 au Syntax * RainbowParenthesesLoadSquare
 au Syntax * RainbowParenthesesLoadBraces
 
-" XML formatter
-function! DoFormatXML() range
-    " Save the file type
-    let l:origft = &ft
-
-    " Clean the file type
-    set ft=
-
-    " Add fake initial tag (so we can process multiple top-level elements)
-    exe ":let l:beforeFirstLine=" . a:firstline . "-1"
-    if l:beforeFirstLine < 0
-        let l:beforeFirstLine=0
-    endif
-    exe a:lastline . "put ='</PrettyXML>'"
-    exe l:beforeFirstLine . "put ='<PrettyXML>'"
-    exe ":let l:newLastLine=" . a:lastline . "+2"
-    if l:newLastLine > line('$')
-        let l:newLastLine=line('$')
-    endif
-
-    " Remove XML header
-    exe ":" . a:firstline . "," . a:lastline . "s/<\?xml\\_.*\?>\\_s*//e"
-
-    " Recalculate last line of the edited code
-    let l:newLastLine=search('</PrettyXML>')
-
-    " Execute external formatter
-    exe ":silent " . a:firstline . "," . l:newLastLine . "!xmllint --noblanks --format --recover -"
-
-    " Recalculate first and last lines of the edited code
-    let l:newFirstLine=search('<PrettyXML>')
-    let l:newLastLine=search('</PrettyXML>')
-
-    " Get inner range
-    let l:innerFirstLine=l:newFirstLine+1
-    let l:innerLastLine=l:newLastLine-1
-
-    " Remove extra unnecessary indentation
-    exe ":silent " . l:innerFirstLine . "," . l:innerLastLine "s/^  //e"
-
-    " Remove fake tag
-    exe l:newLastLine . "d"
-    exe l:newFirstLine . "d"
-
-    " Put the cursor at the first line of the edited code
-    exe ":" . l:newFirstLine
-
-    " Restore the file type
-    exe "set ft=" . l:origft
-endfunction
-command! -range=% FormatXML <line1>,<line2>call DoFormatXML()
-
-nmap <silent> <leader>x :%FormatXML<CR>
-vmap <silent> <leader>x :FormatXML<CR>
-
-set packpath^=~/.config/nvim/
-packadd minpac
-
 lua <<EOF
+
+-- global options
+local o = vim.o
+local g = vim.g
+-- window options
+local wo = vim.wo
+-- buffer options
+local bo = vim.bo
+-- vim options?
+local opt = vim.opt
+
+g.packpath = '~/.config/nvim'
+vim.cmd('packadd minpac')
 
 vim.call('minpac#init')
 
@@ -176,18 +127,12 @@ vim.cmd("call minpac#add('tpope/vim-surround')")
 vim.cmd("call minpac#add('tpope/vim-vinegar')")
 vim.cmd("call minpac#add('tpope/vim-obsession')")
 
--- global options
-local o = vim.o
-local g = vim.g
--- window options
-local wo = vim.wo
--- buffer options
-local bo = vim.bo
--- vim options?
-local opt = vim.opt
+vim.cmd("command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})")
+vim.cmd("command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()")
+vim.cmd("command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()")
 
-g.mapleader = ","
 -- Change the leader but retain the ability to backwards char search
+g.mapleader = ","
 vim.api.nvim_buf_set_keymap(0, '', '\\', ',', {noremap = true})
 
 -- Make sure nvim knows about the Python version we prefer
@@ -236,6 +181,8 @@ o.expandtab = true
 o.tabstop = 2
 -- Let backspace delete indent
 o.softtabstop = 2
+-- Prettier colors
+o.termguicolors = true
 
 -- Autosave open files when window loses focus
 -- NOTE: doesn't work w/ untitled buffers
@@ -277,12 +224,7 @@ require'bufferline'.setup {
 }
 
 telescope = require'telescope'
-
 telescope.load_extension('fzf')
+-- Open find_files w/ C-p
+vim.api.nvim_set_keymap('n', '<C-p>',  [[:Telescope find_files<CR>]], { noremap = true, silent = true })
 EOF
-
-command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})
-command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()
-command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()
-
-nnoremap <silent> <C-P> :Telescope find_files<CR>
