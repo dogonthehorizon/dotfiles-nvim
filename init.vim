@@ -2,30 +2,6 @@ if &shell =~# 'fish$'
     set shell=bash
 endif
 
-
-"""" coc.nvim
-autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif
-
-" <TAB>: completion.
-inoremap <expr><TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
-inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<TAB>""
-inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
-inoremap <silent><expr> <cr> pumvisible() ? coc#_select_confirm() : "\<C-g>u\<CR>"
-
-nmap <silent> gd <Plug>(coc-definition)
-nmap <silent> gy <Plug>(coc-type-definition)
-nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gr <Plug>(coc-references)
-
-" Remap keys for applying codeAction to the current line.
-nmap <leader>ac  <Plug>(coc-codeaction)
-" Apply AutoFix to problem on the current line.
-nmap <leader>qf  <Plug>(coc-fix-current)
-
-let g:indent_guides_start_level = 2
-let g:indent_guides_guide_size = 1
-let g:indent_guides_enable_on_vim_startup = 1
-
 """ Rainbow Parenthesis
 au VimEnter * RainbowParenthesesToggle
 au Syntax * RainbowParenthesesLoadRound
@@ -79,6 +55,40 @@ vim.cmd("call minpac#add('ishan9299/nvim-solarized-lua')")
 vim.cmd("call minpac#add('neoclide/coc.nvim', {'branch': 'release'})")
 vim.cmd("call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})")
 
+vim.cmd("autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif")
+
+o.signcolumn = 'number'
+
+local function t(str)
+    return vim.api.nvim_replace_termcodes(str, true, true, true)
+end
+
+function _G.smart_tab()
+    return vim.fn.pumvisible() == 1 and t'<C-n>' or t'<Tab>'
+end
+
+-- Make <CR> auto-select the first completion item and notify coc.nvim to
+-- format on enter
+function _G.smart_enter()
+  return vim.fn.pumvisible() == 1
+            and vim.fn['coc#_select_confirm']()
+            or t'<C-g>' .. 'u' .. t'<CR>' .. t'<c-r>=coc#on_enter()' .. t'<CR>'
+end
+
+-- <TAB>: completion.
+vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.smart_tab()', { expr = true, silent = true, noremap = true })
+vim.api.nvim_set_keymap('i', '<cr>', 'v:lua.smart_enter()', { expr = true, silent = true, noremap = true })
+
+vim.api.nvim_set_keymap('n', 'gd',  [[<Plug>(coc-definition)]], { silent = true })
+vim.api.nvim_set_keymap('n', 'gy',  [[<Plug>(coc-type-definition)]], { silent = true })
+vim.api.nvim_set_keymap('n', 'gi',  [[<Plug>(coc-implementation)]], { silent = true })
+vim.api.nvim_set_keymap('n', 'gr',  [[<Plug>(coc-references)]], { silent = true })
+
+-- Remap keys for applying codeAction to the current line.
+vim.api.nvim_set_keymap('n', '<leader>ac',  [[<Plug>(coc-codeaction)]], { silent = true })
+-- Apply AutoFix to problem on the current line.
+vim.api.nvim_set_keymap('n', '<leader>qf',  [[<Plug>(coc-fix-current)]], { silent = true })
+
 ---- Command palette-style plugins
 vim.cmd("call minpac#add('nvim-lua/plenary.nvim')")
 vim.cmd("call minpac#add('nvim-telescope/telescope.nvim')")
@@ -119,19 +129,16 @@ o.pyxversion = 3
 opt.shortmess:append "mnrxoOtT"
 -- Allow for cursor beyond last character
 o.virtualedit = "onemore"
-
 -- Turn on backups
 o.backup = true
 -- Persistent undo
 o.undofile = true
 o.undolevels = 1000
 o.undoreload = 10000
-
 -- Highlight current line
 o.cursorline = true
 -- Global clipboard access
 o.clipboard = "unnamedplus"
-
 -- Line numbers on
 o.number = true
 -- Show matching brackets/parenthesis
@@ -150,17 +157,19 @@ o.scrolljump = 5
 o.scrolloff = 3
 -- Highlight problematic whitespace
 o.listchars = "tab:› ,trail:•,extends:#,nbsp:."
-
--- Use indents of 2 spaces
-o.shiftwidth = 2
 -- Tabs are spaces, not tabs
 o.expandtab = true
--- An indentation every two columns
-o.tabstop = 2
 -- Let backspace delete indent
 o.softtabstop = 2
 -- Prettier colors
 o.termguicolors = true
+-- Enable indent guides
+o.tabstop = 2
+o.shiftwidth = 2
+g.indent_guides_start_level = 2
+g.indent_guides_guide_size = 1
+g.indent_guides_enable_on_vim_startup = 1
+
 
 -- Autosave open files when window loses focus
 -- NOTE: doesn't work w/ untitled buffers
