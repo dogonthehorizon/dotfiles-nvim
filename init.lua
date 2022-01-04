@@ -1,15 +1,3 @@
-if &shell =~# 'fish$'
-    set shell=bash
-endif
-
-""" Rainbow Parenthesis
-au VimEnter * RainbowParenthesesToggle
-au Syntax * RainbowParenthesesLoadRound
-au Syntax * RainbowParenthesesLoadSquare
-au Syntax * RainbowParenthesesLoadBraces
-
-lua <<EOF
-
 -- global options
 local o = vim.o
 local g = vim.g
@@ -60,19 +48,19 @@ vim.cmd("autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif")
 o.signcolumn = 'number'
 
 local function t(str)
-    return vim.api.nvim_replace_termcodes(str, true, true, true)
+  return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
 function _G.smart_tab()
-    return vim.fn.pumvisible() == 1 and t'<C-n>' or t'<Tab>'
+  return vim.fn.pumvisible() == 1 and t'<C-n>' or t'<Tab>'
 end
 
 -- Make <CR> auto-select the first completion item and notify coc.nvim to
 -- format on enter
 function _G.smart_enter()
   return vim.fn.pumvisible() == 1
-            and vim.fn['coc#_select_confirm']()
-            or t'<C-g>' .. 'u' .. t'<CR>' .. t'<c-r>=coc#on_enter()' .. t'<CR>'
+  and vim.fn['coc#_select_confirm']()
+  or t'<C-g>' .. 'u' .. t'<CR>' .. t'<c-r>=coc#on_enter()' .. t'<CR>'
 end
 
 -- <TAB>: completion.
@@ -176,6 +164,12 @@ g.indent_guides_enable_on_vim_startup = 1
 -- TODO: move to lua-native autocmd when it's released
 vim.cmd('au FocusLost * silent! wa')
 
+-- Rainbow parenthesis
+vim.cmd("au VimEnter * RainbowParenthesesToggle")
+vim.cmd("au Syntax * RainbowParenthesesLoadRound")
+vim.cmd("au Syntax * RainbowParenthesesLoadSquare")
+vim.cmd("au Syntax * RainbowParenthesesLoadBraces")
+
 -- TreeSitter config
 require'nvim-treesitter.configs'.setup {
   highlight = {
@@ -234,4 +228,3 @@ vim.api.nvim_set_keymap('n', '<leader>gc',  [[:Git commit<CR>]], { noremap = tru
 vim.api.nvim_set_keymap('n', '<leader>gb',  [[:Git blame<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>gl',  [[:Git log<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>gp',  [[:Git push<CR>]], { noremap = true, silent = true })
-EOF
