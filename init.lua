@@ -33,7 +33,6 @@ vim.cmd("call minpac#add('hashivim/vim-terraform')")
 g.terraform_align = 1
 g.terraform_fmt_on_save = 1
 
-
 ---- Themes & Fonts
 vim.cmd("call minpac#add('yamatsum/nvim-nonicons')")
 vim.cmd("call minpac#add('kyazdani42/nvim-web-devicons')")
@@ -77,6 +76,19 @@ vim.api.nvim_set_keymap('n', '<leader>ac',  [[<Plug>(coc-codeaction)]], { silent
 -- Apply AutoFix to problem on the current line.
 vim.api.nvim_set_keymap('n', '<leader>qf',  [[<Plug>(coc-fix-current)]], { silent = true })
 
+-- " Use K to show documentation in preview window.
+-- vim.api.nvim_set_keymap('n', 'K',  [[<SID>v:lua.show_documentation()<CR>]], { silent = true })
+
+-- function! s:show_documentation()
+--   if (index(['vim','help'], &filetype) >= 0)
+--     execute 'h '.expand('<cword>')
+--   elseif (coc#rpc#ready())
+--     call CocActionAsync('doHover')
+--   else
+--     execute '!' . &keywordprg . " " . expand('<cword>')
+--   endif
+-- endfunction
+
 ---- Command palette-style plugins
 vim.cmd("call minpac#add('nvim-lua/plenary.nvim')")
 vim.cmd("call minpac#add('nvim-telescope/telescope.nvim')")
@@ -85,13 +97,12 @@ vim.cmd("call minpac#add('nvim-telescope/telescope-fzf-native.nvim', {'do': 'mak
 ---- Status and bufferline plugins
 
 vim.cmd("call minpac#add('nvim-lualine/lualine.nvim')")
-vim.cmd("call minpac#add('akinsho/bufferline.nvim')")
+vim.cmd("call minpac#add('akinsho/bufferline.nvim', {'rev': 'main'})")
 
 ---- Utilities
 vim.cmd("call minpac#add('scrooloose/nerdcommenter')")
 vim.cmd("call minpac#add('myusuf3/numbers.vim')")
 vim.cmd("call minpac#add('kien/rainbow_parentheses.vim')")
-vim.cmd("call minpac#add('vim-scripts/restore_view.vim')")
 vim.cmd("call minpac#add('godlygeek/tabular')")
 vim.cmd("call minpac#add('Townk/vim-autoclose')")
 vim.cmd("call minpac#add('tpope/vim-fugitive')")
@@ -119,6 +130,7 @@ opt.shortmess:append "mnrxoOtT"
 o.virtualedit = "onemore"
 -- Turn on backups
 o.backup = true
+o.backupdir = os.getenv("HOME") .. "/.vimbackup"
 -- Persistent undo
 o.undofile = true
 o.undolevels = 1000
@@ -158,7 +170,6 @@ g.indent_guides_start_level = 2
 g.indent_guides_guide_size = 1
 g.indent_guides_enable_on_vim_startup = 1
 
-
 -- Autosave open files when window loses focus
 -- NOTE: doesn't work w/ untitled buffers
 -- TODO: move to lua-native autocmd when it's released
@@ -193,11 +204,7 @@ require'nvim-web-devicons'.setup {
 icons = require "nvim-nonicons"
 
 -- setup statusline
-require'lualine'.setup {
-  options = {
-    theme = 'solarized_light'
-  }
-}
+require'lualine'.setup {}
 require'bufferline'.setup {
   options = {
     separator_style = "slant"
