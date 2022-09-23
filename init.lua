@@ -50,21 +50,10 @@ local function t(str)
   return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
-function _G.smart_tab()
-  return vim.fn.pumvisible() == 1 and t'<C-n>' or t'<Tab>'
-end
-
--- Make <CR> auto-select the first completion item and notify coc.nvim to
--- format on enter
-function _G.smart_enter()
-  return vim.fn.pumvisible() == 1
-  and vim.fn['coc#_select_confirm']()
-  or t'<C-g>' .. 'u' .. t'<CR>' .. t'<c-r>=coc#on_enter()' .. t'<CR>'
-end
-
 -- <TAB>: completion.
-vim.api.nvim_set_keymap('i', '<Tab>', 'v:lua.smart_tab()', { expr = true, silent = true, noremap = true })
-vim.api.nvim_set_keymap('i', '<cr>', 'v:lua.smart_enter()', { expr = true, silent = true, noremap = true })
+vim.api.nvim_set_keymap('i', '<Tab>', 'coc#pum#visible() ? coc#pum#next(1) : CheckBackspace() ? "<Tab>" : coc#refresh()', { expr = true, silent = true, noremap = true })
+vim.api.nvim_set_keymap('i', '<cr>', "pumvisible() ? coc#_select_confirm() : '<C-G>u<CR><C-R>=coc#on_enter()<CR>'", { expr = true, silent = true, noremap = true })
+vim.api.nvim_set_keymap("i", "<C-Space>", "coc#refresh()", { silent = true, expr = true })
 
 vim.api.nvim_set_keymap('n', 'gd',  [[<Plug>(coc-definition)]], { silent = true })
 vim.api.nvim_set_keymap('n', 'gy',  [[<Plug>(coc-type-definition)]], { silent = true })
