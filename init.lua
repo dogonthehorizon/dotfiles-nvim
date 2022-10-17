@@ -37,6 +37,7 @@ g.terraform_fmt_on_save = 1
 vim.cmd("call minpac#add('yamatsum/nvim-nonicons')")
 vim.cmd("call minpac#add('kyazdani42/nvim-web-devicons')")
 vim.cmd("call minpac#add('ishan9299/nvim-solarized-lua')")
+vim.cmd("call minpac#add('sainnhe/everforest')")
 
 ---- Completion plugins
 vim.cmd("call minpac#add('neoclide/coc.nvim', {'branch': 'release'})")
@@ -50,9 +51,17 @@ local function t(str)
   return vim.api.nvim_replace_termcodes(str, true, true, true)
 end
 
+-- Too lazy to conver this to Lua.
+vim.cmd([[
+function! CheckBackspace() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
+]])
+
 -- <TAB>: completion.
 vim.api.nvim_set_keymap('i', '<Tab>', 'coc#pum#visible() ? coc#pum#next(1) : CheckBackspace() ? "<Tab>" : coc#refresh()', { expr = true, silent = true, noremap = true })
-vim.api.nvim_set_keymap('i', '<cr>', "pumvisible() ? coc#_select_confirm() : '<C-G>u<CR><C-R>=coc#on_enter()<CR>'", { expr = true, silent = true, noremap = true })
+vim.api.nvim_set_keymap('i', '<cr>', "coc#pum#visible() ? coc#pum#confirm() : '<C-g>u<CR><c-r>=coc#on_enter()<CR>'", { expr = true, silent = true, noremap = true })
 vim.api.nvim_set_keymap("i", "<C-Space>", "coc#refresh()", { silent = true, expr = true })
 
 vim.api.nvim_set_keymap('n', 'gd',  [[<Plug>(coc-definition)]], { silent = true })
@@ -183,8 +192,9 @@ require'nvim-treesitter.configs'.setup {
 }
 
 -- Set the colorscheme in Lua
-o.background = 'light'
-vim.cmd('colorscheme solarized-flat')
+o.background = 'dark'
+g.everforest_enable_italic=1
+vim.cmd('colorscheme everforest')
 
 -- Setup devicons
 require'nvim-web-devicons'.setup {
