@@ -1,8 +1,7 @@
 {
-  "coc.preferences.formatOnSaveFiletypes": ["haskell", "python"],
-  "diagnostic": {
-    "virtualText": true
-  },
+  "codeLens.enable": true,
+  "diagnostic.virtualText": true,
+  "coc.preferences.formatOnSaveFiletypes": ["haskell", "go", "python"],
   "languageserver": {
     "haskell": {
       "command": "haskell-language-server-wrapper",
@@ -74,5 +73,10 @@
       "offsetColumnEnd": 1,
       "formatLines": 1
     }
+  },
+  "java": {
+    "errors.incompleteClasspath.severity": "ignore",
+    "referencesCodeLens.enabled": true,
+    "jdt.ls.vmargs": "-javaagent:/usr/local/share/lombok/lombok.jar"
   }
 }

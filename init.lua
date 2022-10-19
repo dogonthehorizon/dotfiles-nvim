@@ -43,7 +43,7 @@ vim.cmd("call minpac#add('sainnhe/everforest')")
 vim.cmd("call minpac#add('neoclide/coc.nvim', {'branch': 'release'})")
 vim.cmd("call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})")
 
-vim.cmd("autocmd! CompleteDone * if pumvisible() == 0 | pclose | endif")
+vim.cmd("autocmd! CompleteDone * if coc#pum#visible() == 0 | pclose | endif")
 
 o.signcolumn = 'number'
 
