@@ -75,17 +75,16 @@ vim.api.nvim_set_keymap('n', '<leader>ac',  [[<Plug>(coc-codeaction)]], { silent
 vim.api.nvim_set_keymap('n', '<leader>qf',  [[<Plug>(coc-fix-current)]], { silent = true })
 
 -- " Use K to show documentation in preview window.
--- vim.api.nvim_set_keymap('n', 'K',  [[<SID>v:lua.show_documentation()<CR>]], { silent = true })
-
--- function! s:show_documentation()
---   if (index(['vim','help'], &filetype) >= 0)
---     execute 'h '.expand('<cword>')
---   elseif (coc#rpc#ready())
---     call CocActionAsync('doHover')
---   else
---     execute '!' . &keywordprg . " " . expand('<cword>')
---   endif
--- endfunction
+vim.cmd([[
+function! ShowDocumentation()
+  if CocAction('hasProvider', 'hover')
+    call CocActionAsync('doHover')
+  else
+    call feedkeys('K', 'in')
+  endif
+endfunction
+]])
+ vim.api.nvim_set_keymap('n', 'K', ':call ShowDocumentation()<CR>', { silent = true })
 
 ---- Command palette-style plugins
 vim.cmd("call minpac#add('nvim-lua/plenary.nvim')")
@@ -167,6 +166,14 @@ o.shiftwidth = 2
 g.indent_guides_start_level = 2
 g.indent_guides_guide_size = 1
 g.indent_guides_enable_on_vim_startup = 1
+-- Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+-- delays and poor user experience.
+opt.updatetime = 300
+-- Always show the signcolumn, otherwise it would shift the text each time
+-- diagnostics appear/become resolved.
+--
+-- Useful for coc.nvim && vim-fugitive
+opt.signcolumn = "yes"
 
 -- Autosave open files when window loses focus
 -- NOTE: doesn't work w/ untitled buffers
