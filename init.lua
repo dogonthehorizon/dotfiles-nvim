@@ -41,15 +41,8 @@ vim.cmd("call minpac#add('sainnhe/everforest')")
 
 ---- Completion plugins
 vim.cmd("call minpac#add('neoclide/coc.nvim', {'branch': 'release'})")
-vim.cmd("call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})")
 
 vim.cmd("autocmd! CompleteDone * if coc#pum#visible() == 0 | pclose | endif")
-
-o.signcolumn = 'number'
-
-local function t(str)
-  return vim.api.nvim_replace_termcodes(str, true, true, true)
-end
 
 -- Too lazy to conver this to Lua.
 vim.cmd([[
@@ -187,6 +180,7 @@ vim.cmd("au Syntax * RainbowParenthesesLoadSquare")
 vim.cmd("au Syntax * RainbowParenthesesLoadBraces")
 
 -- TreeSitter config
+vim.cmd("call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})")
 require'nvim-treesitter.configs'.setup {
   highlight = {
     enable = true,
@@ -241,3 +235,11 @@ vim.api.nvim_set_keymap('n', '<leader>gc',  [[:Git commit<CR>]], { noremap = tru
 vim.api.nvim_set_keymap('n', '<leader>gb',  [[:Git blame<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>gl',  [[:Git log<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>gp',  [[:Git push<CR>]], { noremap = true, silent = true })
+
+-- Fru fru screen shots
+vim.cmd("call minpac#add('narutoxy/silicon.lua')")
+
+require("silicon").setup({
+  output = "~/Desktop/silicon-${year}-${month}-${date}-${time}.png",
+  font   = 'PragmataPro Mono Liga'
+})
