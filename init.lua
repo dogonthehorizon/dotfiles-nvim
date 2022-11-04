@@ -241,5 +241,7 @@ vim.cmd("call minpac#add('narutoxy/silicon.lua')")
 
 require("silicon").setup({
   output = "~/Desktop/silicon-${year}-${month}-${date}-${time}.png",
-  font   = 'PragmataPro Mono Liga'
+  font   = 'PragmataPro Mono Liga',
+  bgColor = g.terminal_color_4
 })
+vim.api.nvim_set_keymap('v', '<leader>ss',  [[:lua require("silicon").visualise_api({})<CR>]], { noremap = true, silent = true })
