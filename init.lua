@@ -18,6 +18,10 @@ vim.cmd("call minpac#add('k-takata/minpac', {'type': 'opt'})")
 -- Haskell
 vim.cmd("call minpac#add('neovimhaskell/haskell-vim')")
 
+-- Racket
+vim.cmd("call minpac#add('wlangstroth/vim-racket')")
+vim.cmd("call minpac#add('Olical/conjure')")
+
 -- Fish
 vim.cmd("call minpac#add('dag/vim-fish')")
 
@@ -36,15 +40,14 @@ g.terraform_fmt_on_save = 1
 ---- Themes & Fonts
 vim.cmd("call minpac#add('yamatsum/nvim-nonicons')")
 vim.cmd("call minpac#add('kyazdani42/nvim-web-devicons')")
-vim.cmd("call minpac#add('ishan9299/nvim-solarized-lua')")
 vim.cmd("call minpac#add('sainnhe/everforest')")
 
 ---- Completion plugins
-vim.cmd("call minpac#add('neoclide/coc.nvim', {'branch': 'release'})")
+vim.cmd("call minpac#add('neoclide/coc.nvim', {'branch': 'release', 'do': {-> system('yarn install --frozen-lockfile')}})")
 
 vim.cmd("autocmd! CompleteDone * if coc#pum#visible() == 0 | pclose | endif")
 
--- Too lazy to conver this to Lua.
+-- Too lazy to convert this to Lua.
 vim.cmd([[
 function! CheckBackspace() abort
   let col = col('.') - 1
@@ -204,7 +207,12 @@ require'nvim-web-devicons'.setup {
 icons = require "nvim-nonicons"
 
 -- setup statusline
-require'lualine'.setup {}
+require'lualine'.setup {
+  options = {
+    component_separators = '|',
+    section_separators = { left = '', right = '' },
+  }
+}
 require'bufferline'.setup {
   options = {
     separator_style = "slant"
@@ -245,3 +253,6 @@ require("silicon").setup({
   bgColor = g.terminal_color_4
 })
 vim.api.nvim_set_keymap('v', '<leader>ss',  [[:lua require("silicon").visualise_api({})<CR>]], { noremap = true, silent = true })
+
+-- Markdown previews
+vim.cmd("call minpac#add('iamcco/markdown-preview.nvim', {'do': 'packloadall! | call mkdp#util#install()'})")
