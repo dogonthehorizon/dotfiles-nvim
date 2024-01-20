@@ -1,7 +1,7 @@
 {
   "codeLens.enable": true,
   "diagnostic.virtualText": true,
-  "coc.preferences.formatOnSaveFiletypes": ["haskell", "go", "python"],
+  "coc.preferences.formatOnSaveFiletypes": ["haskell", "go", "python", "css", "typescript", "typescriptreact", "typescript.tsx", "json", "html"],
   "languageserver": {
     "haskell": {
       "command": "haskell-language-server-wrapper",
