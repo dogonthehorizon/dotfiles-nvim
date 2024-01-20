@@ -14,6 +14,10 @@ vim.cmd('packadd minpac')
 vim.call('minpac#init')
 
 vim.cmd("call minpac#add('k-takata/minpac', {'type': 'opt'})")
+
+vim.cmd("command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})")
+vim.cmd("command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()")
+vim.cmd("command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()")
 ---- Language Specific Plugins
 -- Haskell
 vim.cmd("call minpac#add('neovimhaskell/haskell-vim')")
@@ -107,9 +111,6 @@ vim.cmd("call minpac#add('tpope/vim-surround')")
 vim.cmd("call minpac#add('tpope/vim-vinegar')")
 vim.cmd("call minpac#add('tpope/vim-obsession')")
 
-vim.cmd("command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})")
-vim.cmd("command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()")
-vim.cmd("command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()")
 
 -- Change the leader but retain the ability to backwards char search
 g.mapleader = ","
@@ -194,6 +195,8 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = false,
   },
 }
+
+require'nvim-treesitter.parsers'.filetype_to_parsername.mdx = 'markdown'
 
 -- Set the colorscheme in Lua
 o.background = 'dark'
