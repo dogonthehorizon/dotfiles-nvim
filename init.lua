@@ -30,8 +30,6 @@ vim.cmd("call minpac#add('Olical/conjure')")
 vim.cmd("call minpac#add('dag/vim-fish')")
 
 -- The Javascript World
-vim.cmd("call minpac#add('pangloss/vim-javascript')")
-vim.cmd("call minpac#add('leafgarland/typescript-vim')")
 vim.cmd("call minpac#add('maxmellon/vim-jsx-pretty')")
 vim.cmd("call minpac#add('HerringtonDarkholme/yats.vim')")
 
@@ -68,6 +66,7 @@ vim.api.nvim_set_keymap('n', 'gd',  [[<Plug>(coc-definition)]], { silent = true 
 vim.api.nvim_set_keymap('n', 'gy',  [[<Plug>(coc-type-definition)]], { silent = true })
 vim.api.nvim_set_keymap('n', 'gi',  [[<Plug>(coc-implementation)]], { silent = true })
 vim.api.nvim_set_keymap('n', 'gr',  [[<Plug>(coc-references)]], { silent = true })
+vim.api.nvim_set_keymap('n', 'gR',  [[<Plug>(coc-rename)]], { silent = true })
 
 -- Remap keys for applying codeAction to the current line.
 vim.api.nvim_set_keymap('n', '<leader>ac',  [[<Plug>(coc-codeaction)]], { silent = true })
@@ -177,6 +176,12 @@ opt.signcolumn = "yes"
 -- TODO: move to lua-native autocmd when it's released
 vim.cmd('au FocusLost * silent! wa')
 
+-- Disable word mapping because it messes with LSP type checking
+-- in languages like Python.
+g["conjure#mapping#doc_word"] = false
+
+vim.cmd("au BufWrite *.py :silent call CocAction('runCommand', 'python.sortImports')")
+
 -- Rainbow parenthesis
 vim.cmd("au VimEnter * RainbowParenthesesToggle")
 vim.cmd("au Syntax * RainbowParenthesesLoadRound")
@@ -259,3 +264,13 @@ vim.api.nvim_set_keymap('v', '<leader>ss',  [[:lua require("silicon").visualise_
 
 -- Markdown previews
 vim.cmd("call minpac#add('iamcco/markdown-preview.nvim', {'do': 'packloadall! | call mkdp#util#install()'})")
+
+vim.cmd("call minpac#add('David-Kunz/gen.nvim')")
+
+require('gen').setup({
+  model = "ein:latest",
+  show_model = true,
+  display_mode="split"
+})
+
+vim.api.nvim_set_keymap('v', '<leader>]',  ':Gen<CR>', { silent = true, noremap = true })
