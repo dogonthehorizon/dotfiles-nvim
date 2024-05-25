@@ -1,13 +1,28 @@
 {
   "codeLens.enable": true,
   "diagnostic.virtualText": true,
-  "coc.preferences.formatOnSaveFiletypes": ["haskell", "go", "python", "css", "typescript", "typescriptreact", "typescript.tsx", "json", "html"],
+  "coc.preferences.formatOnSaveFiletypes": [
+    "haskell",
+    "go",
+    "python",
+    "css",
+    "typescript",
+    "typescriptreact",
+    "typescript.tsx",
+    "json",
+    "html"
+  ],
   "languageserver": {
     "haskell": {
       "command": "haskell-language-server-wrapper",
       "args": ["--lsp"],
-      "rootPatterns": ["*.cabal", "stack.yaml", "cabal.project", "package.yaml"],
-      "filetypes": ["haskell", "lhaskell"],
+      "rootPatterns": [
+        "*.cabal",
+        "stack.yaml",
+        "cabal.project",
+        "package.yaml"
+      ],
+      "filetypes": ["haskell", "lhaskell", "hs", "lhs"],
       "initializationOptions": {},
       "settings": {
         "languageServerHaskell": {
@@ -24,56 +39,8 @@
       "initializationOptions": {}
     }
   },
-  "diagnostic-languageserver.filetypes": {
-    "python": "pylint"
-  },
-  "diagnostic-languageserver.formatFiletypes": {
-    "python": ["black"]
-  },
-  "diagnostic-languageserver.formatters": {
-    "black": {
-      "command": "black",
-      "args": ["-q", "-"]
-    }
-  },
-  "diagnostic-languageserver.linters": {
-    "pylint": {
-      "sourceName": "pylint",
-      "command": "pylint",
-      "debounce": 100,
-      "args": [
-        "--output-format",
-        "text",
-        "--score",
-        "no",
-        "--msg-template",
-        "'{line}:{column}:{category}:{msg} ({msg_id}:{symbol})'",
-        "%file"
-      ],
-      "formatPattern": [
-        "^(\\d+?):(\\d+?):([a-z]+?):(.*)$",
-        {
-          "line": 1,
-          "column": 2,
-          "endColumn": 2,
-          "security": 3,
-          "message": 4
-        }
-      ],
-      "rootPatterns": ["pyproject.toml", "setup.py"],
-      "securities": {
-        "informational": "hint",
-        "refactor": "info",
-        "convention": "info",
-        "warning": "warning",
-        "error": "error",
-        "fatal": "error"
-      },
-      "offsetColumn": 1,
-      "offsetColumnEnd": 1,
-      "formatLines": 1
-    }
-  },
+  "python.formatting.provider": "black",
+  "python.sortImports.path": "isort",
   "java": {
     "errors.incompleteClasspath.severity": "ignore",
     "referencesCodeLens.enabled": true,
