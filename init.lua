@@ -29,10 +29,6 @@ vim.cmd("call minpac#add('Olical/conjure')")
 -- Fish
 vim.cmd("call minpac#add('dag/vim-fish')")
 
--- The Javascript World
-vim.cmd("call minpac#add('maxmellon/vim-jsx-pretty')")
-vim.cmd("call minpac#add('HerringtonDarkholme/yats.vim')")
-
 -- Terraform
 vim.cmd("call minpac#add('hashivim/vim-terraform')")
 
@@ -40,9 +36,12 @@ g.terraform_align = 1
 g.terraform_fmt_on_save = 1
 
 ---- Themes & Fonts
-vim.cmd("call minpac#add('yamatsum/nvim-nonicons')")
 vim.cmd("call minpac#add('kyazdani42/nvim-web-devicons')")
 vim.cmd("call minpac#add('sainnhe/everforest')")
+vim.cmd("call minpac#add('catppuccin/nvim')")
+require("catppuccin").setup({
+  flavour = 'macchiato'
+})
 
 ---- Completion plugins
 vim.cmd("call minpac#add('neoclide/coc.nvim', {'branch': 'release', 'do': {-> system('yarn install --frozen-lockfile')}})")
@@ -90,6 +89,12 @@ vim.cmd("call minpac#add('nvim-lua/plenary.nvim')")
 vim.cmd("call minpac#add('nvim-telescope/telescope.nvim')")
 vim.cmd("call minpac#add('nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'})")
 
+telescope = require'telescope'
+telescope.load_extension('fzf')
+-- Open find_files w/ C-p
+vim.api.nvim_set_keymap('n', '<C-p>',  [[:Telescope find_files<CR>]], { noremap = true, silent = true })
+
+
 ---- Status and bufferline plugins
 
 vim.cmd("call minpac#add('nvim-lualine/lualine.nvim')")
@@ -97,7 +102,6 @@ vim.cmd("call minpac#add('akinsho/bufferline.nvim', {'rev': 'main'})")
 
 ---- Utilities
 vim.cmd("call minpac#add('scrooloose/nerdcommenter')")
-vim.cmd("call minpac#add('myusuf3/numbers.vim')")
 vim.cmd("call minpac#add('kien/rainbow_parentheses.vim')")
 vim.cmd("call minpac#add('godlygeek/tabular')")
 vim.cmd("call minpac#add('Townk/vim-autoclose')")
@@ -134,6 +138,7 @@ o.cursorline = true
 o.clipboard = "unnamedplus"
 -- Line numbers on
 o.number = true
+o.relativenumber = true
 -- Show matching brackets/parenthesis
 o.showmatch = true
 -- Case insensitive search
@@ -206,19 +211,21 @@ require'nvim-treesitter.parsers'.filetype_to_parsername.mdx = 'markdown'
 -- Set the colorscheme in Lua
 o.background = 'dark'
 g.everforest_enable_italic=1
-vim.cmd('colorscheme everforest')
+vim.cmd.colorscheme "catppuccin"
 
 -- Setup devicons
 require'nvim-web-devicons'.setup {
   default = true
 }
-icons = require "nvim-nonicons"
 
 -- setup statusline
 require'lualine'.setup {
   options = {
     component_separators = '|',
     section_separators = { left = '', right = '' },
+  },
+  sections = {
+    lualine_x = { 'g:coc_status' }
   }
 }
 require'bufferline'.setup {
@@ -226,11 +233,6 @@ require'bufferline'.setup {
     separator_style = "slant"
   }
 }
-
-telescope = require'telescope'
-telescope.load_extension('fzf')
--- Open find_files w/ C-p
-vim.api.nvim_set_keymap('n', '<C-p>',  [[:Telescope find_files<CR>]], { noremap = true, silent = true })
 
 -- Shift key fixes
 vim.cmd("command! -bang -nargs=* -complete=file E e<bang> <args>")
