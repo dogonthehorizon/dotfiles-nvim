@@ -46,50 +46,68 @@ require("catppuccin").setup({
 ---- Completion plugins
 vim.cmd("call minpac#add('neoclide/coc.nvim', {'branch': 'release', 'do': {-> system('yarn install --frozen-lockfile')}})")
 
-vim.cmd("autocmd! CompleteDone * if coc#pum#visible() == 0 | pclose | endif")
-
--- Too lazy to convert this to Lua.
-vim.cmd([[
-function! CheckBackspace() abort
-  let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~# '\s'
-endfunction
-]])
+local keyset = vim.keymap.set
+function _G.check_back_space()
+  local col = vim.fn.col('.') - 1
+  return col == 0 or vim.fn.getline('.'):sub(col, col):match('%s') ~= nil
+end
 
 -- <TAB>: completion.
-vim.api.nvim_set_keymap('i', '<Tab>', 'coc#pum#visible() ? coc#pum#next(1) : CheckBackspace() ? "<Tab>" : coc#refresh()', { expr = true, silent = true, noremap = true })
-vim.api.nvim_set_keymap('i', '<cr>', "coc#pum#visible() ? coc#pum#confirm() : '<C-g>u<CR><c-r>=coc#on_enter()<CR>'", { expr = true, silent = true, noremap = true })
-vim.api.nvim_set_keymap("i", "<C-Space>", "coc#refresh()", { silent = true, expr = true })
+local coc_opts = {silent = true, noremap = true, expr = true, replace_keycodes = false}
+keyset("i", "<TAB>", 'coc#pum#visible() ? coc#pum#next(1) : v:lua.check_back_space() ? "<TAB>" : coc#refresh()', coc_opts)
+keyset("i", "<S-TAB>", [[coc#pum#visible() ? coc#pum#prev(1) : "\<C-h>"]], coc_opts)
+-- Make <CR> to accept selected completion item or notify coc.nvim to format
+-- <C-g>u breaks current undo, please make your own choice
+keyset("i", "<cr>", [[coc#pum#visible() ? coc#pum#confirm() : "\<C-g>u\<CR>\<c-r>=coc#on_enter()\<CR>"]], coc_opts)
 
-vim.api.nvim_set_keymap('n', 'gd',  [[<Plug>(coc-definition)]], { silent = true })
-vim.api.nvim_set_keymap('n', 'gy',  [[<Plug>(coc-type-definition)]], { silent = true })
-vim.api.nvim_set_keymap('n', 'gi',  [[<Plug>(coc-implementation)]], { silent = true })
-vim.api.nvim_set_keymap('n', 'gr',  [[<Plug>(coc-references)]], { silent = true })
-vim.api.nvim_set_keymap('n', 'gR',  [[<Plug>(coc-rename)]], { silent = true })
+
+-- Use `[g` and `]g` to navigate diagnostics
+-- Use `:CocDiagnostics` to get all diagnostics of current buffer in location list
+keyset("n", "[g", "<Plug>(coc-diagnostic-prev)", {silent = true})
+keyset("n", "]g", "<Plug>(coc-diagnostic-next)", {silent = true})
+
+-- GoTo code navigation
+keyset("n", "gd", "<Plug>(coc-definition)", {silent = true})
+keyset("n", "gD", [[:Telescope coc diagnostics<CR>]], {silent = true})
+keyset("n", "gy", [[:Telescope coc type_definitions<CR>]], {silent = true})
+keyset("n", "gr", [[:Telescope coc references<CR>]], {silent = true})
+keyset("n", "gR", [[<Plug>(coc-rename)]], {silent = true})
 
 -- Remap keys for applying codeAction to the current line.
-vim.api.nvim_set_keymap('n', '<leader>ac',  [[<Plug>(coc-codeaction)]], { silent = true })
+keyset('n', '<leader>ac',  [[<Plug>(coc-codeaction)]], { silent = true })
 -- Apply AutoFix to problem on the current line.
-vim.api.nvim_set_keymap('n', '<leader>qf',  [[<Plug>(coc-fix-current)]], { silent = true })
+keyset('n', '<leader>qf',  [[<Plug>(coc-fix-current)]], { silent = true })
 
--- " Use K to show documentation in preview window.
-vim.cmd([[
-function! ShowDocumentation()
-  if CocAction('hasProvider', 'hover')
-    call CocActionAsync('doHover')
-  else
-    call feedkeys('K', 'in')
-  endif
-endfunction
-]])
- vim.api.nvim_set_keymap('n', 'K', ':call ShowDocumentation()<CR>', { silent = true })
+-- Use K to show documentation in preview window
+function _G.show_docs()
+    local cw = vim.fn.expand('<cword>')
+    if vim.fn.index({'vim', 'help'}, vim.bo.filetype) >= 0 then
+        vim.api.nvim_command('h ' .. cw)
+    elseif vim.api.nvim_eval('coc#rpc#ready()') then
+        vim.fn.CocActionAsync('doHover')
+    else
+        vim.api.nvim_command('!' .. vim.o.keywordprg .. ' ' .. cw)
+    end
+end
+keyset("n", "K", '<CMD>lua _G.show_docs()<CR>', {silent = true})
 
 ---- Command palette-style plugins
 vim.cmd("call minpac#add('nvim-lua/plenary.nvim')")
 vim.cmd("call minpac#add('nvim-telescope/telescope.nvim')")
 vim.cmd("call minpac#add('nvim-telescope/telescope-fzf-native.nvim', {'do': 'make'})")
+vim.cmd("call minpac#add('fannheyward/telescope-coc.nvim')")
 
 telescope = require'telescope'
+
+telescope.setup({
+  extensions = {
+    coc = {
+      prefer_locations = true,
+      push_cursor_on_edit = true,
+    }
+  },
+})
+
 telescope.load_extension('fzf')
 -- Open find_files w/ C-p
 vim.api.nvim_set_keymap('n', '<C-p>',  [[:Telescope find_files<CR>]], { noremap = true, silent = true })
