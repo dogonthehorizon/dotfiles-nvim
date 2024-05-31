@@ -15,6 +15,12 @@ vim.call('minpac#init')
 
 vim.cmd("call minpac#add('k-takata/minpac', {'type': 'opt'})")
 
+
+-- Change the leader but retain the ability to backwards char search
+g.mapleader = ","
+vim.api.nvim_buf_set_keymap(0, '', '\\', ',', {noremap = true})
+
+
 vim.cmd("command! PackUpdate packadd minpac | source $MYVIMRC | call minpac#update('', {'do': 'call minpac#status()'})")
 vim.cmd("command! PackClean  packadd minpac | source $MYVIMRC | call minpac#clean()")
 vim.cmd("command! PackStatus packadd minpac | source $MYVIMRC | call minpac#status()")
@@ -109,18 +115,15 @@ telescope.setup({
 })
 
 telescope.load_extension('fzf')
+t_builtins = require('telescope.builtin')
+
 -- Open find_files w/ C-p
-vim.api.nvim_set_keymap('n', '<C-p>',  [[:Telescope find_files<CR>]], { noremap = true, silent = true })
+keyset('n', '<C-p>', t_builtins.find_files, {})
+keyset('n', '<leader>fg', t_builtins.live_grep, {})
 
-
----- Status and bufferline plugins
-
-vim.cmd("call minpac#add('nvim-lualine/lualine.nvim')")
-vim.cmd("call minpac#add('akinsho/bufferline.nvim', {'rev': 'main'})")
 
 ---- Utilities
 vim.cmd("call minpac#add('scrooloose/nerdcommenter')")
-vim.cmd("call minpac#add('kien/rainbow_parentheses.vim')")
 vim.cmd("call minpac#add('godlygeek/tabular')")
 vim.cmd("call minpac#add('Townk/vim-autoclose')")
 vim.cmd("call minpac#add('tpope/vim-fugitive')")
@@ -132,11 +135,12 @@ vim.cmd("call minpac#add('tpope/vim-surround')")
 vim.cmd("call minpac#add('tpope/vim-vinegar')")
 vim.cmd("call minpac#add('tpope/vim-obsession')")
 
+vim.cmd("call minpac#add('hiphish/rainbow-delimiters.nvim')")
+require'rainbow-delimiters'
 
--- Change the leader but retain the ability to backwards char search
-g.mapleader = ","
-vim.api.nvim_buf_set_keymap(0, '', '\\', ',', {noremap = true})
 
+-- Disable showing the bufferline because I have not used it in over a decade
+opt.showtabline = 0
 -- Make sure nvim knows about the Python version we prefer
 o.pyxversion = 3
 -- Abbrev. of messages (avoids 'hit enter')
@@ -205,12 +209,6 @@ g["conjure#mapping#doc_word"] = false
 
 vim.cmd("au BufWrite *.py :silent call CocAction('runCommand', 'python.sortImports')")
 
--- Rainbow parenthesis
-vim.cmd("au VimEnter * RainbowParenthesesToggle")
-vim.cmd("au Syntax * RainbowParenthesesLoadRound")
-vim.cmd("au Syntax * RainbowParenthesesLoadSquare")
-vim.cmd("au Syntax * RainbowParenthesesLoadBraces")
-
 -- TreeSitter config
 vim.cmd("call minpac#add('nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'})")
 require'nvim-treesitter.configs'.setup {
@@ -222,13 +220,15 @@ require'nvim-treesitter.configs'.setup {
     -- Instead of true it can also be a list of languages
     additional_vim_regex_highlighting = false,
   },
+  indent = {
+    enable = true
+  }
 }
 
 require'nvim-treesitter.parsers'.filetype_to_parsername.mdx = 'markdown'
 
 -- Set the colorscheme in Lua
 o.background = 'dark'
-g.everforest_enable_italic=1
 vim.cmd.colorscheme "catppuccin"
 
 -- Setup devicons
@@ -237,6 +237,7 @@ require'nvim-web-devicons'.setup {
 }
 
 -- setup statusline
+vim.cmd("call minpac#add('nvim-lualine/lualine.nvim')")
 require'lualine'.setup {
   options = {
     component_separators = '|',
@@ -246,12 +247,6 @@ require'lualine'.setup {
     lualine_x = { 'g:coc_status' }
   }
 }
-require'bufferline'.setup {
-  options = {
-    separator_style = "slant"
-  }
-}
-
 -- Shift key fixes
 vim.cmd("command! -bang -nargs=* -complete=file E e<bang> <args>")
 vim.cmd("command! -bang -nargs=* -complete=file W w<bang> <args>")
@@ -265,7 +260,7 @@ vim.cmd("command! -bang Qa qa<bang>")
 vim.cmd("command! -bang Tabn tabn<bang>")
 
 -- Fugitive
-vim.api.nvim_set_keymap('n', '<leader>gs',  [[:Git<CR>]], { noremap = true, silent = true })
+keyset('n', '<leader>gs', t_builtins.git_status, {})
 vim.api.nvim_set_keymap('n', '<leader>gd',  [[:Gdiff<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>gc',  [[:Git commit<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>gb',  [[:Git blame<CR>]], { noremap = true, silent = true })
