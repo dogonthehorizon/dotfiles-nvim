@@ -3,7 +3,6 @@
   "diagnostic.virtualText": true,
   "coc.preferences.formatOnSaveFiletypes": [
     "haskell",
-    "go",
     "python",
     "css",
     "typescript",
@@ -39,11 +38,9 @@
       "initializationOptions": {}
     }
   },
-  "python.formatting.provider": "black",
-  "python.sortImports.path": "isort",
-  "java": {
-    "errors.incompleteClasspath.severity": "ignore",
-    "referencesCodeLens.enabled": true,
-    "jdt.ls.vmargs": "-javaagent:/usr/local/share/lombok/lombok.jar"
-  }
+  "pyright.inlayHints.parameterTypes": false,
+  "python.formatting.provider": "ruff",
+  "python.sortImports.path": "ruff",
+  "python.linting.ruffEnabled": true,
+  "python.analysis.diagnosticMode": "openFilesOnly"
 }
