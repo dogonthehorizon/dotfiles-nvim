@@ -18,7 +18,13 @@ return {
             require('telescope').load_extension('fzf')
           end,
       },
-      "fannheyward/telescope-coc.nvim",
+      { 
+        "fannheyward/telescope-coc.nvim",
+        opts = {},
+        config = function()
+            require('telescope').load_extension('coc')
+        end,
+      },
     },
     keys = {
       {
@@ -32,6 +38,15 @@ return {
       },
       {
         '<C-k>', require('telescope.builtin').commands, desc = 'Command palette'
+      },
+      {
+        'gD', '<cmd>Telescope coc diagnostics<cr>', desc = 'Show diagnostics'
+      },
+      {
+        'gy', '<cmd>Telescope coc type_definitions<cr>', desc = 'Go to type definition'
+      },
+      {
+        'gr', '<cmd>Telescope coc references<cr>', desc = 'Find references'
       },
     },
   },
