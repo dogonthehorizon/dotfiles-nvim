@@ -11,7 +11,6 @@ Generally:
 
 LSP Support
 
-- Haskell: [hie](https://github.com/haskell/haskell-ide-engine)
 - Terraform: [terraform-ls](https://github.com/hashicorp/terraform-ls)
 
 ## Installation
@@ -19,5 +18,3 @@ LSP Support
 ```sh
 git clone https://github.com/dogonthehorizon/dotfiles-nvim ~/.config/nvim/
 ```
-
-Then on first invocation, run `:PackUpdate`.

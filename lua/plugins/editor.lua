@@ -15,13 +15,17 @@ return {
   "preservim/nerdcommenter",
   "godlygeek/tabular",
   "Townk/vim-autoclose",
-  "tpope/vim-surround",
+  {
+    "echasnovski/mini.surround",
+    version = '*',
+    opts = {}
+  },
   "tpope/vim-vinegar",
   "tpope/vim-obsession",
   {
     "lukas-reineke/indent-blankline.nvim", -- Using the recommended replacement
     main = "ibl",
-    opts = {}  -- Using default options, customize as needed
+    opts = {}
   },
 
   {
@@ -83,8 +87,7 @@ return {
   {
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
-    config = function()
-      require('todo-comments').setup({
+    opts = {
         keywords = {
           FIX = {
             alt = { "fixme", "fix" }, -- a set of other keywords that all map to this FIX keywords
@@ -92,8 +95,7 @@ return {
           },
           TODO = { alt = { "todo" } },
         }
-      })
-    end
+    },
   },
   {
     "iamcco/markdown-preview.nvim",

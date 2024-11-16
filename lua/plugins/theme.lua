@@ -4,10 +4,10 @@ return {
     priority = 1000,
     name = "catppuccin",
     opts = {
-      flavour = 'mocha',
+      flavour = 'macchiato',
       dim_inactive = {
         enabled = true,
-        percentage = 0.30,
+        percentage = 0.20,
       },
       integrations = {
         coc_nvim = true
