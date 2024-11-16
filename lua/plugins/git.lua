@@ -1,12 +1,6 @@
 return {
   {
     "tpope/vim-fugitive",
-    dependencies = {
-      {
-        "airblade/vim-gitgutter",
-        lazy = false
-      },
-    },
     keys = {
       { "<leader>gs", ":Git<CR>", desc = "Git status" },
       { "<leader>gd", ":Gdiff<CR>", desc = "Git diff" },
@@ -16,4 +10,9 @@ return {
       { "<leader>gp", ":Git push<CR>", desc = "Git push" },
     },
   },
+  {
+    "lewis6991/gitsigns.nvim",
+    event = "VeryLazy",
+    opts = {}
+  }
 }

@@ -23,7 +23,7 @@ return {
   "tpope/vim-vinegar",
   "tpope/vim-obsession",
   {
-    "lukas-reineke/indent-blankline.nvim", -- Using the recommended replacement
+    "lukas-reineke/indent-blankline.nvim",
     main = "ibl",
     opts = {}
   },
@@ -72,19 +72,6 @@ return {
     end
   },
   {
-    'nvim-lualine/lualine.nvim',
-    opts = {
-      options = {
-        theme = 'catppuccin',
-        component_separators = '|',
-        section_separators = { left = '', right = '' },
-      },
-      sections = {
-        lualine_x = { 'g:coc_status' }
-      }
-    },
-  },
-  {
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {
@@ -99,8 +86,21 @@ return {
   },
   {
     "iamcco/markdown-preview.nvim",
+    cmd = { "MarkdownPreviewToggle", "MarkdownPreview", "MarkdownPreviewStop" },
     build = function()
+      require("lazy").load({ plugins = { "markdown-preview.nvim" } })
       vim.fn["mkdp#util#install"]()
-    end
+    end,
+    keys = {
+      {
+        "<leader>cp",
+        ft = "markdown",
+        "<cmd>MarkdownPreviewToggle<cr>",
+        desc = "Markdown Preview",
+      },
+    },
+    config = function()
+      vim.cmd([[do FileType]])
+    end,
   },
 }
