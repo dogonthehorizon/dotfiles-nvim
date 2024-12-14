@@ -38,11 +38,19 @@ return {
       },
     },
     opts = {
-
         provider = 'claude',
         claude = {
+          api_key_name = 'cmd:bw get password console.anthropic.com',
           model = 'claude-3-5-sonnet-20241022'
         },
+        mappings = {
+          files = {
+            add_current = '<leader>aF'
+          }
+        },
+        file_selector = {
+          provider = 'telescope'
+        }
     },
   }
 }

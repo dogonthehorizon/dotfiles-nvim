@@ -9,7 +9,7 @@ return {
         section_separators = { left = '', right = '' },
       },
       sections = {
-        lualine_x = { 'g:coc_status' }
+        lualine_x = { 'g:coc_status', 'filetype' }
       }
     },
   },

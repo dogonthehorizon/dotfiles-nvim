@@ -52,7 +52,7 @@ return {
           'typescript', 'yaml', 'json', 'toml', 'haskell', 'dockerfile',
           'git_config', 'git_rebase', 'gitattributes', 'gitcommit',
           'gitignore', 'go', 'gomod', 'gosum', 'hcl', 'jsdoc', 'mermaid',
-          'tmux', 'tsx', 'xml'
+          'tmux', 'tsx', 'xml', 'terraform'
         },
         highlight = {
             enable = true,
