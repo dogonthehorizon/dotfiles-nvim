@@ -12,6 +12,10 @@
     "html"
   ],
   "languageserver": {
+    "lua": {
+      "command": "lua-language-server",
+      "filetypes": ["lua"]
+    },
     "haskell": {
       "command": "haskell-language-server-wrapper",
       "args": ["--lsp"],

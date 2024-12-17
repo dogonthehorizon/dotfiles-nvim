@@ -16,10 +16,6 @@ return {
     },
     dependencies = {
       "nvim-neotest/nvim-nio",
-      {
-        "microsoft/vscode-js-debug",
-        build = "npm install --legacy-peer-deps && npx gulp vsDebugServerBundle && mv dist out"
-      },
       "mxsdev/nvim-dap-vscode-js",
       {
         "rcarriga/nvim-dap-ui",
