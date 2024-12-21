@@ -2,11 +2,6 @@
 local function execute_lecker(url)
 -- Construct the command as an array of arguments
 local cmd = {
-    "poetry",
-    "--directory",
-    vim.fn.expand("~/git/dogonthehorizon/lecker/"),
-    "run",
-    "--",
     "lecker",
     "fetch",
     url
@@ -31,7 +26,15 @@ vim.system(cmd, { text = true }, function(obj)
 
         -- If there was an error, show it
         if obj.code ~= 0 then
-            vim.notify("Lecker command failed with exit code: " .. obj.code, vim.log.levels.ERROR)
+            local error_msg = "Lecker command failed:\n" ..
+                            "Exit code: " .. obj.code .. "\n" ..
+                            "Error: " .. (obj.stderr or "No error message")
+            vim.notify(error_msg, vim.log.levels.ERROR)
+            
+            -- Also write error output to the buffer
+            local error_lines = vim.split(obj.stderr or "", '\n', { plain = true })
+            vim.api.nvim_buf_set_lines(buf, -1, -1, false, {"", "Error Output:", ""})
+            vim.api.nvim_buf_set_lines(buf, -1, -1, false, error_lines)
         end
     end)
 end)
