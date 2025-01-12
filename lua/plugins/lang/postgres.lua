@@ -66,6 +66,30 @@ local function setup_dbui()
 	return M
 end
 
+-- NOTE: db configurations are managed per workspace, so you'll need to add
+-- .nvim.lua in the root of the project and configure db connections.
+--
+-- Here's an example:
+--
+--[=====[ 
+-- file: workspace/.nvim.lua
+
+local aws = require("config.functions")
+
+local agent_db_pw = aws.get_secret_value(
+	"arn:aws:secretsmanager:us-west-2::secret:my-secret-arn",
+	{ profile = "teem-cfo", region = "us-west-2" }
+)
+
+vim.g.dbs = {
+	{
+		name = "agent-db",
+		url = "postgres://my_user:"
+			.. agent_db_pw["password"]
+			.. "@my_db_ur/my_db",
+	},
+}
+--]=====]
 return {
 	{
 		"kristijanhusak/vim-dadbod-ui",
