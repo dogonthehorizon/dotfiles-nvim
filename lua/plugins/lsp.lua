@@ -136,6 +136,7 @@ return {
 			"williamboman/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 		},
+		keys = { { "<leader>cM", "<cmd>Mason<cr>", desc = "Mason" } },
 		config = function()
 			local mason = require("mason")
 			local mason_lspconfig = require("mason-lspconfig")
@@ -159,7 +160,7 @@ return {
 					"pyright",
 					"hls",
 					"terraformls",
-					"tsserver",
+					"ts_ls",
 					"denols",
 					"tailwindcss",
 					"html",
@@ -236,6 +237,7 @@ return {
 					{ name = "nvim_lsp" },
 					{ name = "buffer" },
 					{ name = "path" },
+					{ name = "vim-dadbod-completion" },
 				},
 				---@diagnostic disable-next-line: missing-fields
 				formatting = {
@@ -278,6 +280,7 @@ return {
 					lua = { "stylua" },
 					python = { "ruff_format", "ruff_organize_imports" },
 					sql = { "pg_format" },
+					fish = { "fish_indent" },
 				},
 				format_on_save = {
 					lsp_fallback = true,
@@ -299,6 +302,7 @@ return {
 				typescriptreact = { "eslint_d" },
 				svelte = { "eslint_d" },
 				python = { "ruff" },
+				fish = { "fish" },
 			}
 
 			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })

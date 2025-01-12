@@ -1,31 +1,31 @@
 -- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
-  local lazyrepo = "https://github.com/folke/lazy.nvim.git"
-  local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
-  if vim.v.shell_error ~= 0 then
-    vim.api.nvim_echo({
-      { "Failed to clone lazy.nvim:\n", "ErrorMsg" },
-      { out, "WarningMsg" },
-      { "\nPress any key to exit..." },
-    }, true, {})
-    vim.fn.getchar()
-    os.exit(1)
-  end
+	local lazyrepo = "https://github.com/folke/lazy.nvim.git"
+	local out = vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
+	if vim.v.shell_error ~= 0 then
+		vim.api.nvim_echo({
+			{ "Failed to clone lazy.nvim:\n", "ErrorMsg" },
+			{ out, "WarningMsg" },
+			{ "\nPress any key to exit..." },
+		}, true, {})
+		vim.fn.getchar()
+		os.exit(1)
+	end
 end
 vim.opt.rtp:prepend(lazypath)
 
 -- Autosave open files when window loses focus
 -- NOTE: doesn't work w/ untitled buffers
 -- TODO: move to lua-native autocmd when it's released
-vim.cmd('au FocusLost * silent! wa')
+vim.cmd("au FocusLost * silent! wa")
 
 -- Make sure to setup `mapleader` and `maplocalleader` before
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
 -- Change the leader but retain the ability to backwards char search
 vim.g.mapleader = ","
-vim.api.nvim_buf_set_keymap(0, '', '\\', ',', {noremap = true})
+vim.api.nvim_buf_set_keymap(0, "", "\\", ",", { noremap = true })
 
 -- global options
 local o = vim.o
@@ -46,7 +46,7 @@ opt.showtabline = 0
 -- Make sure nvim knows about the Python version we prefer
 o.pyxversion = 3
 -- Abbrev. of messages (avoids 'hit enter')
-opt.shortmess:append "mnrxoOtT"
+opt.shortmess:append("mnrxoOtT")
 -- Allow for cursor beyond last character
 o.virtualedit = "onemore"
 -- Turn on backups
@@ -99,16 +99,21 @@ vim.opt.updatetime = 300
 -- Useful for vim-fugitive
 vim.opt.signcolumn = "yes"
 
+-- Allow loading project-specific config files
+vim.o.exrc = true
+-- Make it secure by restricting some commands
+vim.o.secure = true
+
 -- Setup lazy.nvim
 require("lazy").setup({
-  spec = {
-    -- import your plugins
-    { import = "plugins" },
-    { import = "plugins.lang" }
-  },
-  change_detection = {
-    enabled = false,
-  },
-  -- automatically check for plugin updates
-  checker = { enabled = true },
+	spec = {
+		-- import your plugins
+		{ import = "plugins" },
+		{ import = "plugins.lang" },
+	},
+	change_detection = {
+		enabled = false,
+	},
+	-- automatically check for plugin updates
+	checker = { enabled = true },
 })
