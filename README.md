@@ -9,10 +9,6 @@ Generally:
 - [rg](https://github.com/BurntSushi/ripgrep)
 - [fzf](https://github.com/junegunn/fzf)
 
-LSP Support
-
-- Terraform: [terraform-ls](https://github.com/hashicorp/terraform-ls)
-
 ## Installation
 
 ```sh

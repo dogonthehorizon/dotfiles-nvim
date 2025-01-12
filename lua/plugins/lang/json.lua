@@ -1,6 +1,6 @@
 return {
-  {
-    "b0o/schemastore.nvim",
-    version = false,
-  },
+	{
+		"b0o/schemastore.nvim",
+		version = false,
+	},
 }

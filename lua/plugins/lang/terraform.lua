@@ -1,6 +1,6 @@
 return {
-  {
-    "hashivim/vim-terraform",
-    lazy = true,
-  },
+	{
+		"hashivim/vim-terraform",
+		lazy = true,
+	},
 }

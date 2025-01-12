@@ -1,4 +1,4 @@
 return {
-  "neovimhaskell/haskell-vim",
-  ft = 'haskell',
+	"neovimhaskell/haskell-vim",
+	ft = "haskell",
 }

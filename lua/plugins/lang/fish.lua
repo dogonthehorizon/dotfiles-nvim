@@ -1,6 +1,6 @@
 return {
-  {
-    "dag/vim-fish",
-    ft = 'fish',
-  }
+	{
+		"dag/vim-fish",
+		ft = "fish",
+	},
 }
