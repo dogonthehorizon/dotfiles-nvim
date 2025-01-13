@@ -161,11 +161,11 @@ return {
 					"hls",
 					"terraformls",
 					"ts_ls",
-					"denols",
 					"tailwindcss",
 					"html",
 					"cssls",
 					"harper_ls",
+					"dockerls",
 				},
 				automatic_installation = false,
 			})
@@ -178,6 +178,7 @@ return {
 					"ruff",
 					"eslint_d",
 					-- pg_format -- not available in mason yet
+					"hadolint",
 
 					-- dap
 					"chrome-debug-adapter",
@@ -281,6 +282,8 @@ return {
 					python = { "ruff_format", "ruff_organize_imports" },
 					sql = { "pg_format" },
 					fish = { "fish_indent" },
+					terraform = { "terraform_fmt" },
+					tf = { "terraform_fmt" },
 				},
 				format_on_save = {
 					lsp_fallback = true,
@@ -303,6 +306,9 @@ return {
 				svelte = { "eslint_d" },
 				python = { "ruff" },
 				fish = { "fish" },
+				dockerfile = { "hadolint" },
+				terraform = { "terraform_validate" },
+				tf = { "terraform_validate" },
 			}
 
 			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
