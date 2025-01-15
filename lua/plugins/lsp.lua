@@ -28,7 +28,7 @@ return {
 				-- provide the inlay hints.
 				inlay_hints = {
 					enabled = true,
-					exclude = {}, -- filetypes for which you don't want to enable inlay hints
+					exclude = {}, -- File types for which you don't want to enable inlay hints
 				},
 				capabilities = {
 					workspace = {
@@ -70,8 +70,6 @@ return {
 
 			local capabilities = cmp_nvim_lsp.default_capabilities()
 
-			-- Change the Diagnostic symbols in the sign column (gutter)
-			-- (not in youtube nvim video)
 			local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
 			for type, icon in pairs(signs) do
 				local hl = "DiagnosticSign" .. type
@@ -127,6 +125,19 @@ return {
 						},
 					})
 				end,
+				["jsonls"] = function()
+					lspconfig["jsonls"].setup({
+						capabilities = capabilities,
+						settings = {
+							json = {
+								schemas = require("schemastore").json.schemas(),
+								validate = {
+									enable = true,
+								},
+							},
+						},
+					})
+				end,
 			})
 		end,
 	},
@@ -166,6 +177,7 @@ return {
 					"cssls",
 					"harper_ls",
 					"dockerls",
+					"jsonls",
 				},
 				automatic_installation = false,
 			})
@@ -177,10 +189,11 @@ return {
 					"stylua",
 					"ruff",
 					"eslint_d",
-					-- pg_format -- not available in mason yet
+					-- "pg_format", -- not available in mason yet
 					"hadolint",
+					"shellcheck",
 
-					-- dap
+					-- DAP
 					"chrome-debug-adapter",
 				},
 			})
@@ -208,7 +221,7 @@ return {
 			opts.sources = opts.sources or {}
 			table.insert(opts.sources, {
 				name = "lazydev",
-				group_index = 0, -- set group index to 0 to skip loading LuaLS completions
+				group_index = 0, -- Set group index to 0 to skip loading LuaLS completions
 			})
 		end,
 		config = function()
@@ -287,7 +300,7 @@ return {
 				},
 				format_on_save = {
 					lsp_fallback = true,
-					timeout_ms = 1000,
+					timeout_ms = 500,
 				},
 			})
 		end,
@@ -303,12 +316,13 @@ return {
 				typescript = { "eslint_d" },
 				javascriptreact = { "eslint_d" },
 				typescriptreact = { "eslint_d" },
-				svelte = { "eslint_d" },
 				python = { "ruff" },
 				fish = { "fish" },
 				dockerfile = { "hadolint" },
 				terraform = { "terraform_validate" },
 				tf = { "terraform_validate" },
+				bash = { "shellcheck" },
+				sh = { "shellcheck" },
 			}
 
 			local lint_augroup = vim.api.nvim_create_augroup("lint", { clear = true })
