@@ -73,6 +73,13 @@ return {
 				end,
 				desc = "DAP: Close UI",
 			},
+			{
+				"<leader>dL",
+				function()
+					require("osv").launch({ port = 8086 })
+				end,
+				desc = "DAP: start Lua debug server",
+			},
 		},
 		dependencies = {
 			"nvim-neotest/nvim-nio",
@@ -134,6 +141,21 @@ return {
 					},
 				}
 			end
+
+			dap.configurations.lua = {
+				{
+					type = "lua",
+					request = "attach",
+					name = "Attach to running Neovim instance",
+				},
+			}
+
+			dap.adapters.lua = function(callback, config)
+				callback({ type = "server", host = config.host or "127.0.0.1", port = config.port or 8086 })
+			end
 		end,
+	},
+	{
+		"jbyuki/one-small-step-for-vimkind",
 	},
 }

@@ -1,10 +1,11 @@
 return {
+	{ "mason-org/mason-lspconfig.nvim", version = "^1.0.0" },
 	{
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			"hrsh7th/cmp-nvim-lsp",
-			"williamboman/mason.nvim",
+			"mason-org/mason.nvim",
 		},
 		opts = function()
 			---@class PluginLspOpts
@@ -142,9 +143,10 @@ return {
 		end,
 	},
 	{
-		"williamboman/mason.nvim",
+		"mason-org/mason.nvim",
+		version = "^1.0.0",
 		dependencies = {
-			"williamboman/mason-lspconfig.nvim",
+			"mason-org/mason-lspconfig.nvim",
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 		},
 		keys = { { "<leader>cM", "<cmd>Mason<cr>", desc = "Mason" } },

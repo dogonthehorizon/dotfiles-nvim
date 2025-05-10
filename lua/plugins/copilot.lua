@@ -4,6 +4,7 @@ return {
 		event = "VeryLazy",
 		version = false,
 		build = "make",
+		dir = "/Users/ffreire/git/yetone/avante.nvim",
 		dependencies = {
 			"nvim-treesitter/nvim-treesitter",
 			"stevearc/dressing.nvim",
@@ -37,10 +38,10 @@ return {
 			},
 		},
 		opts = {
-			provider = "claude",
 			claude = {
 				api_key_name = "cmd:bw get password console.anthropic.com",
 				model = "claude-3-5-sonnet-20241022",
+				--model = "claude-3-7-sonnet-20250219",
 			},
 			mappings = {
 				files = {
@@ -54,11 +55,5 @@ return {
 				auto_focus_sidebar = false,
 			},
 		},
-	},
-	{
-		"dogonthehorizon/nvim-model-context-protocol",
-		dir = "/Users/ffreire/git/dogonthehorizon/nvim-model-context-protocol",
-		build = "python3 -m venv .venv || true && source .venv/bin/activate.fish && pip install -r requirements.txt",
-		init = function() end,
 	},
 }
