@@ -30,10 +30,6 @@ vim.api.nvim_buf_set_keymap(0, "", "\\", ",", { noremap = true })
 -- global options
 local o = vim.o
 local g = vim.g
--- window options
-local wo = vim.wo
--- buffer options
-local bo = vim.bo
 -- vim options?
 local opt = vim.opt
 

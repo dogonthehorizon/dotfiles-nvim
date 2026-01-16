@@ -18,17 +18,23 @@ return {
 					virtual_text = {
 						spacing = 4,
 						source = "if_many",
-						-- This will set set the prefix to a function that returns the diagnostics icon based on the severity
-						-- this only works on a recent 0.10.0 build. Will be set to "●" when not supported
-						prefix = "icons",
+						prefix = function(diagnostic)
+							local icons = {
+								[vim.diagnostic.severity.ERROR] = "●",
+								[vim.diagnostic.severity.WARN] = "▲",
+								[vim.diagnostic.severity.HINT] = "⚑",
+								[vim.diagnostic.severity.INFO] = "»",
+							}
+							return icons[diagnostic.severity] or "●"
+						end,
 					},
 					severity_sort = true,
 					signs = {
 						text = {
-							[vim.diagnostic.severity.ERROR] = " ",
-							[vim.diagnostic.severity.WARN] = " ",
-							[vim.diagnostic.severity.HINT] = "󰠠 ",
-							[vim.diagnostic.severity.INFO] = " ",
+							[vim.diagnostic.severity.ERROR] = "●",
+							[vim.diagnostic.severity.WARN] = "▲",
+							[vim.diagnostic.severity.HINT] = "⚑",
+							[vim.diagnostic.severity.INFO] = "»",
 						},
 					},
 				},
@@ -52,7 +58,6 @@ return {
 		end,
 		config = function(_, opts)
 			-- Setup LSP servers
-			local lspconfig = require("lspconfig")
 			local cmp_nvim_lsp = require("cmp_nvim_lsp")
 			local mason_lspconfig = require("mason-lspconfig")
 
@@ -71,8 +76,12 @@ return {
 					keymap.set("n", "gR", vim.lsp.buf.rename, k_opts)
 					keymap.set("n", "<leader>ac", vim.lsp.buf.code_action, opts)
 					keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", opts)
-					keymap.set("n", "[d", vim.diagnostic.goto_prev, opts)
-					keymap.set("n", "]d", vim.diagnostic.goto_next, opts)
+					keymap.set("n", "[d", function()
+						vim.diagnostic.jump({ count = -1, float = true })
+					end, opts)
+					keymap.set("n", "]d", function()
+						vim.diagnostic.jump({ count = 1, float = true })
+					end, opts)
 					keymap.set("n", "gD", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
 				end,
 			})
@@ -198,6 +207,7 @@ return {
 					"prettier",
 					"stylua",
 					"ruff",
+					"luacheck",
 					"eslint_d",
 					-- "pg_format", -- not available in mason yet
 					"hadolint",
@@ -277,8 +287,7 @@ return {
 			})
 
 			-- Setup lspconfig capabilities
-			local capabilities =
-				require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
+			require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
 		end,
 	},
 	{
@@ -324,6 +333,7 @@ return {
 				javascriptreact = { "eslint_d" },
 				typescriptreact = { "eslint_d" },
 				python = { "ruff" },
+				lua = { "luacheck" },
 				fish = { "fish" },
 				dockerfile = { "hadolint" },
 				terraform = { "terraform_validate" },

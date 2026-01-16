@@ -71,7 +71,7 @@ end
 --
 -- Here's an example:
 --
---[=====[ 
+--[=====[
 -- file: workspace/.nvim.lua
 
 local aws = require("config.functions")
