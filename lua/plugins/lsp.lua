@@ -23,6 +23,14 @@ return {
 						prefix = "icons",
 					},
 					severity_sort = true,
+					signs = {
+						text = {
+							[vim.diagnostic.severity.ERROR] = " ",
+							[vim.diagnostic.severity.WARN] = " ",
+							[vim.diagnostic.severity.HINT] = "󰠠 ",
+							[vim.diagnostic.severity.INFO] = " ",
+						},
+					},
 				},
 				-- Enable this to enable the builtin LSP inlay hints on Neovim >= 0.10.0
 				-- Be aware that you also will need to properly configure your LSP server to
@@ -42,7 +50,7 @@ return {
 			}
 			return ret
 		end,
-		config = function()
+		config = function(_, opts)
 			-- Setup LSP servers
 			local lspconfig = require("lspconfig")
 			local cmp_nvim_lsp = require("cmp_nvim_lsp")
@@ -69,24 +77,26 @@ return {
 				end,
 			})
 
+			vim.diagnostic.config(vim.tbl_deep_extend("force", {}, opts.diagnostics or {}))
+
 			local capabilities = cmp_nvim_lsp.default_capabilities()
 
-			local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
-			for type, icon in pairs(signs) do
-				local hl = "DiagnosticSign" .. type
-				vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+			local function setup_server(server_name, config)
+				config = vim.tbl_deep_extend("force", {
+					capabilities = capabilities,
+				}, config or {})
+
+				vim.lsp.config[server_name] = config
+				vim.lsp.enable(server_name)
 			end
 
 			mason_lspconfig.setup_handlers({
 				-- default handler for installed servers
 				function(server_name)
-					lspconfig[server_name].setup({
-						capabilities = capabilities,
-					})
+					setup_server(server_name, {})
 				end,
 				["lua_ls"] = function()
-					lspconfig["lua_ls"].setup({
-						capabilities = capabilities,
+					setup_server("lua_ls", {
 						settings = {
 							Lua = {
 								workspace = {
@@ -114,8 +124,7 @@ return {
 					})
 				end,
 				["pyright"] = function()
-					lspconfig["pyright"].setup({
-						capabilities = capabilities,
+					setup_server("pyright", {
 						settings = {
 							python = {
 								analysis = {
@@ -127,8 +136,7 @@ return {
 					})
 				end,
 				["jsonls"] = function()
-					lspconfig["jsonls"].setup({
-						capabilities = capabilities,
+					setup_server("jsonls", {
 						settings = {
 							json = {
 								schemas = require("schemastore").json.schemas(),
@@ -271,9 +279,6 @@ return {
 			-- Setup lspconfig capabilities
 			local capabilities =
 				require("cmp_nvim_lsp").default_capabilities(vim.lsp.protocol.make_client_capabilities())
-			require("lspconfig")["lua_ls"].setup({
-				capabilities = capabilities,
-			})
 		end,
 	},
 	{
