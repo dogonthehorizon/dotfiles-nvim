@@ -132,18 +132,6 @@ return {
 						},
 					})
 				end,
-				["pyright"] = function()
-					setup_server("pyright", {
-						settings = {
-							python = {
-								analysis = {
-									diagnosticMode = "openFilesOnly",
-									autoImportCompletions = true,
-								},
-							},
-						},
-					})
-				end,
 				["jsonls"] = function()
 					setup_server("jsonls", {
 						settings = {
@@ -156,6 +144,15 @@ return {
 						},
 					})
 				end,
+			})
+
+			-- Manual setup for ty (installed via uv)
+			setup_server("ty", {
+				settings = {
+					ty = {
+						-- settings
+					},
+				},
 			})
 		end,
 	},
@@ -187,7 +184,6 @@ return {
 			mason_lspconfig.setup({
 				ensure_installed = {
 					"lua_ls",
-					"pyright",
 					"hls",
 					"terraformls",
 					"ts_ls",
