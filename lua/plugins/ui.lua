@@ -1,7 +1,59 @@
 return {
 	{
-		"stevearc/dressing.nvim",
-		event = "VeryLazy",
+		"folke/snacks.nvim",
+		priority = 1000,
+		lazy = false,
+		---@type snacks.Config
+		opts = {
+			bigfile = { enabled = true },
+			dashboard = { enabled = true },
+			indent = { enabled = true },
+			input = { enabled = true },
+			notifier = { enabled = true },
+			picker = { enabled = true },
+			quickfile = { enabled = true },
+			scope = { enabled = true },
+			scroll = { enabled = true },
+			statuscolumn = { enabled = true },
+			words = { enabled = true },
+		},
+		keys = {
+			{
+				"<C-p>",
+				function()
+					Snacks.picker.files()
+				end,
+				desc = "File picker",
+			},
+			{
+				"<leader>fg",
+				function()
+					Snacks.picker.grep()
+				end,
+				desc = "Search for symbols",
+			},
+			{
+				"<leader>fk",
+				function()
+					Snacks.picker.keymaps()
+				end,
+				desc = "Show active keymaps",
+			},
+			{
+				"<C-k>",
+				function()
+					Snacks.picker.commands()
+				end,
+				desc = "Command palette",
+			},
+			{
+				"<leader>ft",
+				function()
+					Snacks.picker.todo_comments()
+				end,
+				desc = "Find todos",
+			},
+		},
 	},
 	{
 		"nvim-lualine/lualine.nvim",
@@ -33,10 +85,30 @@ return {
 					["cmp.entry.get_documentation"] = true,
 				},
 			},
-		},
-		dependencies = {
-			"MunifTanjim/nui.nvim",
-			"rcarriga/nvim-notify",
+			routes = {
+				{
+					filter = {
+						event = "msg_show",
+						kind = "echomsg",
+						find = "nvim%-treesitter",
+					},
+					view = "mini",
+				},
+				{
+					filter = {
+						event = "msg_show",
+						find = "nvim%-treesitter",
+					},
+					view = "mini",
+				},
+				{
+					filter = {
+						event = "notify",
+						find = "nvim%-treesitter",
+					},
+					view = "mini",
+				},
+			},
 		},
 		keys = {
 			{ "<leader>sn", "", desc = "+noice" },

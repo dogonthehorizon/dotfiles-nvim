@@ -70,19 +70,25 @@ return {
 					local opts = { buffer = ev.buf, silent = true }
 
 					keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-					keymap.set("n", "gy", "<cmd>Telescope lsp_definitions<CR>", opts)
+					keymap.set("n", "gy", function()
+						Snacks.picker.lsp_definitions()
+					end, opts)
 					keymap.set("n", "K", vim.lsp.buf.hover, opts)
 					keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
 					keymap.set("n", "gR", vim.lsp.buf.rename, k_opts)
 					keymap.set("n", "<leader>ac", vim.lsp.buf.code_action, opts)
-					keymap.set("n", "gr", "<cmd>Telescope lsp_references<CR>", opts)
+					keymap.set("n", "gr", function()
+						Snacks.picker.lsp_references()
+					end, opts)
 					keymap.set("n", "[d", function()
 						vim.diagnostic.jump({ count = -1, float = true })
 					end, opts)
 					keymap.set("n", "]d", function()
 						vim.diagnostic.jump({ count = 1, float = true })
 					end, opts)
-					keymap.set("n", "gD", "<cmd>Telescope diagnostics bufnr=0<CR>", opts)
+					keymap.set("n", "gD", function()
+						Snacks.picker.diagnostics_buffer()
+					end, opts)
 				end,
 			})
 
@@ -108,6 +114,9 @@ return {
 					setup_server("lua_ls", {
 						settings = {
 							Lua = {
+								diagnostics = {
+									globals = { "Snacks" },
+								},
 								workspace = {
 									checkThirdParty = false,
 								},
@@ -223,6 +232,8 @@ return {
 				-- See the configuration section for more details
 				-- Load luvit types when the `vim.uv` word is found
 				{ path = "${3rd}/luv/library", words = { "vim%.uv" } },
+				"snacks.nvim",
+				"lazy.nvim",
 			},
 		},
 	},

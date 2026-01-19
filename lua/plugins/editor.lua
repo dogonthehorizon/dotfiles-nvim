@@ -22,14 +22,6 @@ return {
 	},
 	"tpope/vim-vinegar",
 	"tpope/vim-obsession",
-	{
-		"lukas-reineke/indent-blankline.nvim",
-		event = { "BufReadPre", "BufNewFile" },
-		main = "ibl",
-		opts = {
-			indent = { char = "┊" },
-		},
-	},
 
 	{
 		"hiphish/rainbow-delimiters.nvim",
@@ -41,59 +33,57 @@ return {
 	},
 	{
 		"nvim-treesitter/nvim-treesitter",
-		event = { "BufReadPre", "BufNewFile" },
-		build = function()
-			require("nvim-treesitter.install").update({ with_sync = true })()
-		end,
+		lazy = false,
+		build = ":TSUpdate",
 		config = function()
-			local configs = require("nvim-treesitter.configs")
+			-- Install parsers
+			require("nvim-treesitter").install({
+				"bash",
+				"css",
+				"dockerfile",
+				"fish",
+				"git_config",
+				"git_rebase",
+				"gitattributes",
+				"gitcommit",
+				"gitignore",
+				"go",
+				"gomod",
+				"gosum",
+				"haskell",
+				"hcl",
+				"html",
+				"javascript",
+				"jsdoc",
+				"json",
+				"lua",
+				"markdown",
+				"markdown_inline",
+				"mermaid",
+				"python",
+				"regex",
+				"sql",
+				"terraform",
+				"tmux",
+				"toml",
+				"tsx",
+				"typescript",
+				"xml",
+				"yaml",
+			})
 
-			configs.setup({
-				ensure_installed = {
-					"bash",
-					"css",
-					"dockerfile",
-					"fish",
-					"git_config",
-					"git_rebase",
-					"gitattributes",
-					"gitcommit",
-					"gitignore",
-					"go",
-					"gomod",
-					"gosum",
-					"haskell",
-					"hcl",
-					"html",
-					"javascript",
-					"jsdoc",
-					"json",
-					"lua",
-					"markdown",
-					"markdown_inline",
-					"mermaid",
-					"python",
-					"regex",
-					"sql",
-					"terraform",
-					"tmux",
-					"toml",
-					"tsx",
-					"typescript",
-					"xml",
-					"yaml",
-				},
-				highlight = {
-					enable = true,
-					-- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-					-- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-					-- Using this option may slow down your editor, and you may see some duplicate highlights.
-					-- Instead of true it can also be a list of languages
-					additional_vim_regex_highlighting = false,
-				},
-				indent = {
-					enable = true,
-				},
+			-- Enable Highlighting
+			vim.api.nvim_create_autocmd("FileType", {
+				callback = function()
+					pcall(vim.treesitter.start)
+				end,
+			})
+
+			-- Enable Indentation
+			vim.api.nvim_create_autocmd("FileType", {
+				callback = function()
+					vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+				end,
 			})
 
 			-- Register markdown parser for MDX files
