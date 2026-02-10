@@ -99,6 +99,10 @@ return {
 		end,
 	},
 	{
+		"bezhermoso/tree-sitter-ghostty",
+		build = "make nvim_install",
+	},
+	{
 		"folke/todo-comments.nvim",
 		dependencies = { "nvim-lua/plenary.nvim" },
 		opts = {
