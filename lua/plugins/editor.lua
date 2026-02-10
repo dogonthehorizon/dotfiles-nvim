@@ -34,7 +34,10 @@ return {
 	{
 		"nvim-treesitter/nvim-treesitter",
 		lazy = false,
-		build = ":TSUpdate",
+		build = function()
+			vim.cmd("TSUpdate")
+			require("config.fix_macos_parsers")()
+		end,
 		config = function()
 			-- Install parsers
 			require("nvim-treesitter").install({
@@ -71,6 +74,11 @@ return {
 				"xml",
 				"yaml",
 			})
+
+			-- Workaround: tree-sitter-cli compiles parsers as dylibs on macOS
+			-- instead of bundles, which can crash neovim. Patch the install_name
+			-- on each .so after installation.
+			require("config.fix_macos_parsers")()
 
 			-- Enable Highlighting
 			vim.api.nvim_create_autocmd("FileType", {
