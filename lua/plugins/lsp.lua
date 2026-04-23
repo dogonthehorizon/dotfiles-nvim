@@ -1,228 +1,147 @@
 return {
-	{ "mason-org/mason-lspconfig.nvim", version = "^1.0.0" },
+	{
+		"mason-org/mason.nvim",
+		keys = { { "<leader>cM", "<cmd>Mason<cr>", desc = "Mason" } },
+		---@diagnostic disable-next-line: missing-fields
+		opts = {
+			ui = {
+				border = "rounded",
+				icons = {
+					package_installed = "✓",
+					package_pending = "➜",
+					package_uninstalled = "✗",
+				},
+			},
+		},
+	},
+	{
+		"mason-org/mason-lspconfig.nvim",
+		dependencies = {
+			"mason-org/mason.nvim",
+			"neovim/nvim-lspconfig",
+		},
+		opts = {
+			ensure_installed = {
+				"lua_ls",
+				"hls",
+				"terraformls",
+				"ts_ls",
+				"tailwindcss",
+				"html",
+				"cssls",
+				"harper_ls",
+				"dockerls",
+				"jsonls",
+			},
+			automatic_enable = true,
+		},
+	},
 	{
 		"neovim/nvim-lspconfig",
 		event = { "BufReadPre", "BufNewFile" },
 		dependencies = {
 			"hrsh7th/cmp-nvim-lsp",
-			"mason-org/mason.nvim",
 		},
-		opts = function()
-			---@class PluginLspOpts
-			local ret = {
-				-- options for vim.diagnostic.config()
-				---@type vim.diagnostic.Opts
-				diagnostics = {
-					underline = true,
-					update_in_insert = false,
-					virtual_text = {
-						spacing = 4,
-						source = "if_many",
-						prefix = function(diagnostic)
-							local icons = {
-								[vim.diagnostic.severity.ERROR] = "●",
-								[vim.diagnostic.severity.WARN] = "▲",
-								[vim.diagnostic.severity.HINT] = "⚑",
-								[vim.diagnostic.severity.INFO] = "»",
-							}
-							return icons[diagnostic.severity] or "●"
-						end,
-					},
-					severity_sort = true,
-					signs = {
-						text = {
+		config = function()
+			-- Global capabilities for all LSP servers (cmp-nvim-lsp + file operations)
+			vim.lsp.config("*", {
+				capabilities = vim.tbl_deep_extend(
+					"force",
+					require("cmp_nvim_lsp").default_capabilities(),
+					{
+						workspace = {
+							fileOperations = {
+								didRename = true,
+								willRename = true,
+							},
+						},
+					}
+				),
+			})
+
+			-- Enable ty (installed manually via uv, not Mason)
+			vim.lsp.enable("ty")
+
+			-- Diagnostics configuration
+			vim.diagnostic.config({
+				underline = true,
+				update_in_insert = false,
+				virtual_text = {
+					spacing = 4,
+					source = "if_many",
+					prefix = function(diagnostic)
+						local icons = {
 							[vim.diagnostic.severity.ERROR] = "●",
 							[vim.diagnostic.severity.WARN] = "▲",
 							[vim.diagnostic.severity.HINT] = "⚑",
 							[vim.diagnostic.severity.INFO] = "»",
-						},
+						}
+						return icons[diagnostic.severity] or "●"
+					end,
+				},
+				severity_sort = true,
+				signs = {
+					text = {
+						[vim.diagnostic.severity.ERROR] = "●",
+						[vim.diagnostic.severity.WARN] = "▲",
+						[vim.diagnostic.severity.HINT] = "⚑",
+						[vim.diagnostic.severity.INFO] = "»",
 					},
 				},
-				-- Enable this to enable the builtin LSP inlay hints on Neovim >= 0.10.0
-				-- Be aware that you also will need to properly configure your LSP server to
-				-- provide the inlay hints.
-				inlay_hints = {
-					enabled = true,
-					exclude = {}, -- File types for which you don't want to enable inlay hints
-				},
-				capabilities = {
-					workspace = {
-						fileOperations = {
-							didRename = true,
-							willRename = true,
-						},
-					},
-				},
-			}
-			return ret
-		end,
-		config = function(_, opts)
-			-- Setup LSP servers
-			local cmp_nvim_lsp = require("cmp_nvim_lsp")
-			local mason_lspconfig = require("mason-lspconfig")
+			})
 
-			local keymap = vim.keymap
-			local k_opts = { noremap = true, silent = true }
+			-- Inlay hints
+			vim.lsp.inlay_hint.enable(true)
 
+			-- Buffer-local keymaps on LSP attach
 			vim.api.nvim_create_autocmd("LspAttach", {
 				group = vim.api.nvim_create_augroup("UserLspConfig", {}),
 				callback = function(ev)
-					local opts = { buffer = ev.buf, silent = true }
+					local buf_opts = { buffer = ev.buf, silent = true }
 
-					keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-					keymap.set("n", "gy", function()
+					vim.keymap.set("n", "gd", vim.lsp.buf.definition, buf_opts)
+					vim.keymap.set("n", "gy", function()
 						Snacks.picker.lsp_definitions()
-					end, opts)
-					keymap.set("n", "K", vim.lsp.buf.hover, opts)
-					keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
-					keymap.set("n", "gR", vim.lsp.buf.rename, k_opts)
-					keymap.set("n", "<leader>ac", vim.lsp.buf.code_action, opts)
-					keymap.set("n", "gr", function()
+					end, buf_opts)
+					vim.keymap.set("n", "K", vim.lsp.buf.hover, buf_opts)
+					vim.keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, buf_opts)
+					vim.keymap.set("n", "gR", vim.lsp.buf.rename, buf_opts)
+					vim.keymap.set("n", "<leader>ac", vim.lsp.buf.code_action, buf_opts)
+					vim.keymap.set("n", "gr", function()
 						Snacks.picker.lsp_references()
-					end, opts)
-					keymap.set("n", "[d", function()
+					end, buf_opts)
+					vim.keymap.set("n", "[d", function()
 						vim.diagnostic.jump({ count = -1, float = true })
-					end, opts)
-					keymap.set("n", "]d", function()
+					end, buf_opts)
+					vim.keymap.set("n", "]d", function()
 						vim.diagnostic.jump({ count = 1, float = true })
-					end, opts)
-					keymap.set("n", "gD", function()
+					end, buf_opts)
+					vim.keymap.set("n", "gD", function()
 						Snacks.picker.diagnostics_buffer()
-					end, opts)
+					end, buf_opts)
 				end,
-			})
-
-			vim.diagnostic.config(vim.tbl_deep_extend("force", {}, opts.diagnostics or {}))
-
-			local capabilities = cmp_nvim_lsp.default_capabilities()
-
-			local function setup_server(server_name, config)
-				config = vim.tbl_deep_extend("force", {
-					capabilities = capabilities,
-				}, config or {})
-
-				vim.lsp.config[server_name] = config
-				vim.lsp.enable(server_name)
-			end
-
-			mason_lspconfig.setup_handlers({
-				-- default handler for installed servers
-				function(server_name)
-					setup_server(server_name, {})
-				end,
-				["lua_ls"] = function()
-					setup_server("lua_ls", {
-						settings = {
-							Lua = {
-								diagnostics = {
-									globals = { "Snacks" },
-								},
-								workspace = {
-									checkThirdParty = false,
-								},
-								codeLens = {
-									enable = true,
-								},
-								completion = {
-									callSnippet = "Replace",
-								},
-								doc = {
-									privateName = { "^_" },
-								},
-								hint = {
-									enable = true,
-									setType = false,
-									paramType = true,
-									paramName = "Disable",
-									semicolon = "Disable",
-									arrayIndex = "Disable",
-								},
-							},
-						},
-					})
-				end,
-				["jsonls"] = function()
-					setup_server("jsonls", {
-						settings = {
-							json = {
-								schemas = require("schemastore").json.schemas(),
-								validate = {
-									enable = true,
-								},
-							},
-						},
-					})
-				end,
-			})
-
-			-- Manual setup for ty (installed via uv)
-			setup_server("ty", {
-				settings = {
-					ty = {
-						-- settings
-					},
-				},
 			})
 		end,
 	},
 	{
-		"mason-org/mason.nvim",
-		version = "^1.0.0",
-		dependencies = {
-			"mason-org/mason-lspconfig.nvim",
-			"WhoIsSethDaniel/mason-tool-installer.nvim",
+		"WhoIsSethDaniel/mason-tool-installer.nvim",
+		dependencies = { "mason-org/mason.nvim" },
+		opts = {
+			ensure_installed = {
+				-- formatters
+				"prettier",
+				"stylua",
+				"ruff",
+				"luacheck",
+				"eslint_d",
+				-- "pg_format", -- not available in mason yet
+				"hadolint",
+				"shellcheck",
+
+				-- DAP
+				"js-debug-adapter",
+			},
 		},
-		keys = { { "<leader>cM", "<cmd>Mason<cr>", desc = "Mason" } },
-		config = function()
-			local mason = require("mason")
-			local mason_lspconfig = require("mason-lspconfig")
-			local mason_tool_installer = require("mason-tool-installer")
-
-			---@diagnostic disable-next-line: missing-fields
-			mason.setup({
-				ui = {
-					border = "rounded",
-					icons = {
-						package_installed = "✓",
-						package_pending = "➜",
-						package_uninstalled = "✗",
-					},
-				},
-			})
-
-			mason_lspconfig.setup({
-				ensure_installed = {
-					"lua_ls",
-					"hls",
-					"terraformls",
-					"ts_ls",
-					"tailwindcss",
-					"html",
-					"cssls",
-					"harper_ls",
-					"dockerls",
-					"jsonls",
-				},
-				automatic_installation = false,
-			})
-
-			mason_tool_installer.setup({
-				ensure_installed = {
-					-- formatters
-					"prettier",
-					"stylua",
-					"ruff",
-					"luacheck",
-					"eslint_d",
-					-- "pg_format", -- not available in mason yet
-					"hadolint",
-					"shellcheck",
-
-					-- DAP
-					"chrome-debug-adapter",
-				},
-			})
-		end,
 	},
 	{
 		"folke/lazydev.nvim",

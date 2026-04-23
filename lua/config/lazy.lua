@@ -17,15 +17,18 @@ vim.opt.rtp:prepend(lazypath)
 
 -- Autosave open files when window loses focus
 -- NOTE: doesn't work w/ untitled buffers
--- TODO: move to lua-native autocmd when it's released
-vim.cmd("au FocusLost * silent! wa")
+vim.api.nvim_create_autocmd("FocusLost", {
+	callback = function()
+		vim.cmd("silent! wa")
+	end,
+})
 
 -- Make sure to setup `mapleader` and `maplocalleader` before
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
 -- Change the leader but retain the ability to backwards char search
 vim.g.mapleader = ","
-vim.api.nvim_buf_set_keymap(0, "", "\\", ",", { noremap = true })
+vim.keymap.set("", "\\", ",", { noremap = true })
 
 -- global options
 local o = vim.o
@@ -96,9 +99,8 @@ vim.opt.updatetime = 300
 vim.opt.signcolumn = "yes"
 
 -- Allow loading project-specific config files
+-- NOTE: In Neovim 0.12+, exrc traverses parent directories
 vim.o.exrc = true
--- Make it secure by restricting some commands
-vim.o.secure = true
 
 -- Setup lazy.nvim
 require("lazy").setup({
